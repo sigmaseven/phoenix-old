@@ -65,10 +65,15 @@ std::string Util::readLineFromSocket(int clientfd)
 
 	while(part.length() > 0 && part != "\n")
 	{
-		std::cout << "byte received: " << part << std::endl;
-		line += part;
+		if(part != "\r")
+		{
+			std::cout << "byte received: " << part << std::endl;
+			line += part;
+		}
+		else
+		{
+		}
 		part = Util::recvFromPlayer(clientfd, 1);
 	}
-	std::cout << "freedom" << std::endl;
 	return line;
 }
