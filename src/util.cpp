@@ -39,19 +39,25 @@ std::string Util::recvFromPlayer(int clientfd, int length)
 	return received;
 }
 
-std::string Util::getPlayerCommand(Player *player)
+std::vector<std::string> Util::getPlayerCommand(Player *player)
 {
-	std::string command;
-	command = Util::readLineFromSocket(player->getFileDescriptor());
-	std::cout << "Command received: " << command << std::endl;
+	std::string line;
+	std::vector<std::string> command;
+	line = Util::readLineFromSocket(player->getFileDescriptor());
+	std::cout << "Command received: " << line << std::endl;
+	command = Util::splitLine(line);
 	return command;
 }
 
-std::string Util::getPlayerCommand(int clientfd)
+std::vector<std::string> Util::getPlayerCommand(int clientfd)
 {
-	std::string command;
-	command = Util::readLineFromSocket(clientfd);
-	std::cout << "Command received: " << command << std::endl;
+	std::string line;
+	std::vector<std::string> command;
+
+	line = Util::readLineFromSocket(clientfd);
+	std::cout << "Command received: " << line << std::endl;
+
+	command = Util::splitLine(line);
 	return command;
 }
 
@@ -65,9 +71,8 @@ std::string Util::readLineFromSocket(int clientfd)
 
 	while(part.length() > 0 && part != "\n")
 	{
-		if(part != "\r")
+		if(part != "\r" && part != "\t")
 		{
-			std::cout << "byte received: " << part << std::endl;
 			line += part;
 		}
 		else
@@ -76,4 +81,17 @@ std::string Util::readLineFromSocket(int clientfd)
 		part = Util::recvFromPlayer(clientfd, 1);
 	}
 	return line;
+}
+
+std::vector<std::string> Util::splitLine(std::string line)
+{
+	std::stringstream ss(line);
+	std::string item;
+	std::vector<std::string> commands;
+
+	while(std::getline(ss, item, ' '))
+	{
+		commands.push_back(item);
+	}
+	return commands;
 }

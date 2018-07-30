@@ -51,14 +51,14 @@ std::string Nanny::getPlayerName(int clientfd)
 {
 	Util::sendToPlayer(clientfd, std::string("Hey there, who are you? "));
 
-	std::string name = Util::getPlayerCommand(clientfd);
-	return name;
+	std::vector<std::string> name = Util::getPlayerCommand(clientfd);
+	return name[0];
 }
 
 std::string Nanny::getPlayerPassword(int clientfd)
 {
 	Util::sendToPlayer(clientfd, std::string("What's your password? "));
 
-	std::string password = Util::getPlayerCommand(clientfd);
-	return password;
+	std::vector<std::string> password = Util::getPlayerCommand(clientfd);
+	return password[0];
 }
