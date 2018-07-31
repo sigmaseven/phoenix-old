@@ -20,6 +20,7 @@ class Player
 	uint8_t endurance;
 	uint8_t charisma;
 	uint8_t intelligence;
+	uint8_t agility;
 	uint8_t luck;
 
 	bool active;
@@ -29,6 +30,7 @@ public:
 	uint8_t getPerception(){ return this->perception; }
 	uint8_t getEndurance(){ return this->endurance; }
 	uint8_t getCharisma(){ return this->charisma; }
+	uint8_t getAgility(){ return this->agility; }
 	uint8_t getIntelligence(){ return this->intelligence; }
 	uint8_t getLuck(){ return this->luck; }
 	std::string getName(){ return this->name; }
@@ -47,6 +49,14 @@ public:
 	void setMaxMana(uint16_t mp){ this->max_mana = mp; }
 	void setMovement(uint16_t mp){ this->movement = mp; }
 	void setMaxMovement(uint16_t mp){ this->max_movement = mp; }
+	void setStrength(uint8_t stat){ this->strength = stat; }
+	void setPerception(uint8_t stat){ this->perception = stat; }
+	void setEndurance(uint8_t stat){ this->endurance = stat; }
+	void setCharisma(uint8_t stat){ this->charisma = stat; }
+	void setIntelligence(uint8_t stat){ this->intelligence = stat; }
+	void setAgility(uint8_t stat){ this->agility = stat; }
+	void setLuck(uint8_t stat){ this->luck = stat; }
+
 	void setActive(bool b){ this->active = b; }
 	void setName(std::string name){ this->name = name; }
 	void setPassword(std::string password){ this->password = password; }

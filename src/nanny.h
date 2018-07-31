@@ -18,4 +18,5 @@ public:
 	static std::string getPlayerName(int clientfd);
 	static std::string getPlayerPassword(int clientfd);
 	static void printBanner(int clientfd);
+	static std::vector<int> rollStats(int clientfd);
 };

@@ -1,5 +1,7 @@
 #include "util.h"
 
+unsigned int Util::seed = 0;
+
 int32_t Util::sendToPlayer(int clientfd, std::string message)
 {
 	int status;
@@ -94,4 +96,29 @@ std::vector<std::string> Util::splitLine(std::string line)
 		commands.push_back(item);
 	}
 	return commands;
+}
+
+int Util::rollDice(int number, int size)
+{
+	int total = 0;
+	int x;
+
+	if(seed == 0)
+	{
+		struct timeval tp;
+		gettimeofday(&tp, NULL);
+		seed = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+	}
+
+	for(x = 0; x < number; x++)
+	{
+		int roll = rand_r(&seed) % size;
+
+		if(roll == 0)
+			roll = 1;
+
+		total += roll;
+	}
+
+	return total;
 }
