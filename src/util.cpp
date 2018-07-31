@@ -46,7 +46,7 @@ std::vector<std::string> Util::getPlayerCommand(Player *player)
 	std::string line;
 	std::vector<std::string> command;
 	line = Util::readLineFromSocket(player->getFileDescriptor());
-	std::cout << "Command received: " << line << std::endl;
+	//std::cout << "Command received: " << line << std::endl;
 	command = Util::splitLine(line);
 	return command;
 }
@@ -57,7 +57,7 @@ std::vector<std::string> Util::getPlayerCommand(int clientfd)
 	std::vector<std::string> command;
 
 	line = Util::readLineFromSocket(clientfd);
-	std::cout << "Command received: " << line << std::endl;
+	//std::cout << "Command received: " << line << std::endl;
 
 	command = Util::splitLine(line);
 	return command;

@@ -18,16 +18,21 @@ void *Nanny::greetPlayer(void *clientfd)
 
 void Nanny::newPlayerMenu(int clientfd)
 {
-	std::string name;
-	std::string password;
+	std::string name = "";
+	std::string password = "";
 	uint8_t strength, perception, endurance, charisma, intelligence, agility, luck;
 
 	Nanny::printBanner(clientfd);
-	name = Nanny::getPlayerName(clientfd);
-	password = Nanny::getPlayerPassword(clientfd);
+	while(name.length() < 1)
+	{
+		name = Nanny::getPlayerName(clientfd);
+	}
+	while(password.length() < 1)
+	{
+		password = Nanny::getPlayerPassword(clientfd);
+	}
 	std::vector<int> stats = Nanny::rollStats(clientfd);
 
-	std::cout << "Creating new player " << name << " with password " << password << std::endl;
 	Player *player = PlayerManager::findOpenPlayerSlot();
 
 	if(player)
@@ -48,6 +53,9 @@ void Nanny::newPlayerMenu(int clientfd)
 		player->setHealth(player->getEndurance() * 10);
 		player->setMovement(player->getAgility() * 20);
 		player->setActive(true);
+
+		std::cout << "Creating new player " << name << " with password " << password << std::endl;
+		PlayerManager::writePlayerFile(player);
 	}
 	else
 	{
@@ -71,9 +79,24 @@ std::string Nanny::getPlayerName(int clientfd)
 
 std::string Nanny::getPlayerPassword(int clientfd)
 {
+	unsigned char hash[SHA_DIGEST_LENGTH];
+	std::stringstream ss;
+	int x;
+
 	Util::sendToPlayer(clientfd, std::string("What's your password? "));
 
 	std::vector<std::string> password = Util::getPlayerCommand(clientfd);
+	if(password[0].length() > 0)
+	{
+		char sha_hash[SHA_DIGEST_LENGTH * 2 + 1];
+		memset(sha_hash, 0, sizeof(sha_hash));
+		SHA1((const unsigned char *)password[0].c_str(), password[0].length(), hash);
+		for(x = 0; x < SHA_DIGEST_LENGTH; x++)
+		{
+			sprintf(&sha_hash[x * 2], "%02x", (unsigned int)hash[x]);
+		}
+		return std::string(sha_hash);
+	}
 	return password[0];
 }
 

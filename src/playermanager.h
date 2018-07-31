@@ -42,6 +42,7 @@ public:
 	uint16_t getMaxMana(){ return this->max_mana; }
 	uint16_t getMovement(){ return this->movement; }
 	uint16_t getMaxMovement(){ return this->max_movement; }
+	std::string getPassword(){ return this->password; }
 
 	void setHealth(uint16_t hp){ this->health = hp; }
 	void setMaxHealth(uint16_t hp){ this->max_health = hp; }
@@ -70,4 +71,5 @@ class PlayerManager
 public:
 	static void init();
 	static Player *findOpenPlayerSlot();
+	static void writePlayerFile(Player *player);
 };

@@ -64,7 +64,7 @@ void Server::acceptConnections()
 	struct sockaddr_in client_addr;
 	int status;
 
-	while(clientfd = accept(this->sockfd, (struct sockaddr *)&client_addr, &len))
+	while((clientfd = accept(this->sockfd, (struct sockaddr *)&client_addr, &len)))
 	{
 		if(clientfd < 0)
 		{

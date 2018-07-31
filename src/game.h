@@ -1,4 +1,6 @@
 #pragma once
+#include "nlohmann/json.hpp"
+
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -13,6 +15,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <openssl/sha.h>
 
 #define MAX_NPC      65535
 #define MAX_PLAYERS  128

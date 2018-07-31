@@ -32,3 +32,24 @@ Player *PlayerManager::findOpenPlayerSlot()
 
 	return NULL;
 }
+
+void PlayerManager::writePlayerFile(Player *player)
+{
+	nlohmann::json j;
+
+	j["name"] = player->getName();
+	j["password"] = player->getPassword();
+	j["health"] = player->getHealth();
+	j["max_health"] = player->getMaxHealth();
+	j["movement"] = player->getMovement();
+	j["max_movement"] = player->getMaxMovement();
+	j["stats"]["strength"] = player->getStrength();
+	j["stats"]["perception"] = player->getPerception();
+	j["stats"]["endurance"] = player->getEndurance();
+	j["stats"]["charisma"] = player->getCharisma();
+	j["stats"]["intelligence"] = player->getIntelligence();
+	j["stats"]["agility"] = player->getAgility();
+	j["stats"]["luck"] = player->getLuck();
+
+	std::cout << j.dump() << std::endl;
+}
