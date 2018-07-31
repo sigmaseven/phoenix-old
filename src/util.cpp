@@ -10,13 +10,16 @@ int32_t Util::sendToPlayer(int clientfd, std::string message)
 		std::cerr << "Util::sendToPlayer - Received invalid client descriptor" << std::endl;
 		return -1;
 	}
-	status = send(clientfd, message.c_str(), message.length(),0);
+	if(fcntl(clientfd, F_GETFD) != -1)
+	{
+		status = send(clientfd, message.c_str(), message.length(), MSG_NOSIGNAL);
+	}
 	return status;
 }
 
 std::string Util::recvFromPlayer(int clientfd, int length)
 {
-	char buffer[MAX_INPUT + 1];
+	char buffer[MAX_INPUT_SIZE + 1];
 	int status;
 
 	if(clientfd < 0)
@@ -24,10 +27,12 @@ std::string Util::recvFromPlayer(int clientfd, int length)
 		std::cerr << "Util::recvFromPlayer - Received invalid client descriptor" << std::endl;
 		return std::string("");
 	}
+	if(fcntl(clientfd, F_GETFD) != -1)
+	{
+		memset(&buffer, 0, sizeof(buffer));
 
-	memset(&buffer, 0, sizeof(buffer));
-
-	status = recv(clientfd, &buffer, length, 0);
+		status = recv(clientfd, &buffer, length, 0);
+	}
 
 	if(status < 0)
 	{
@@ -35,6 +40,13 @@ std::string Util::recvFromPlayer(int clientfd, int length)
 		std::string received("");
 		perror("recv");
 		return received;
+	}
+	else if(status == 0) //player disconnected.
+	{
+		std::cout << "Player disconnected." << std::endl;
+		//PlayerManager::resetPlayer(int clientfd);
+		close(clientfd);
+		return std::string("");
 	}
 
 	std::string received(buffer);

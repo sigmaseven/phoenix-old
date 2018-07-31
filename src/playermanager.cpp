@@ -36,6 +36,8 @@ Player *PlayerManager::findOpenPlayerSlot()
 void PlayerManager::writePlayerFile(Player *player)
 {
 	nlohmann::json j;
+	std::ofstream file;
+	DIR *directory;
 
 	j["name"] = player->getName();
 	j["password"] = player->getPassword();
@@ -52,4 +54,35 @@ void PlayerManager::writePlayerFile(Player *player)
 	j["stats"]["luck"] = player->getLuck();
 
 	std::cout << j.dump() << std::endl;
+	directory = opendir("players");
+	if(!directory)
+	{
+		mkdir("players", 0700);
+	}
+	file.open("players/" + player->getName() + ".json");
+	if(file.is_open())
+	{
+		file << j.dump();
+		file.close();
+	}
+}
+
+bool PlayerManager::playerFileExists(std::string name)
+{
+	DIR *directory;
+	std::ofstream file;
+
+	directory = opendir("players");
+	if(!directory)
+	{
+		mkdir("players", 0700);
+	}
+
+	file.open("players/" + name + ".json");
+
+	if(file.is_open())
+	{
+		return true;
+	}
+	return false;
 }

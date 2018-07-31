@@ -21,16 +21,24 @@ void Nanny::newPlayerMenu(int clientfd)
 	std::string name = "";
 	std::string password = "";
 	uint8_t strength, perception, endurance, charisma, intelligence, agility, luck;
+	int ret;
 
 	Nanny::printBanner(clientfd);
 	while(name.length() < 1)
 	{
 		name = Nanny::getPlayerName(clientfd);
+
+		if(fcntl(clientfd, F_GETFD) == -1)
+			pthread_exit(&ret);
 	}
 	while(password.length() < 1)
 	{
 		password = Nanny::getPlayerPassword(clientfd);
+
+		if(fcntl(clientfd, F_GETFD) == -1)
+			pthread_exit(&ret);
 	}
+
 	std::vector<int> stats = Nanny::rollStats(clientfd);
 
 	Player *player = PlayerManager::findOpenPlayerSlot();

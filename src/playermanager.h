@@ -72,4 +72,5 @@ public:
 	static void init();
 	static Player *findOpenPlayerSlot();
 	static void writePlayerFile(Player *player);
+	static bool playerFileExists(std::string name);
 };
