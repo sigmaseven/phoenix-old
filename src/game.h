@@ -12,6 +12,9 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#define MAX_NPC 64000
-#define MAX_PLAYERS 128
-#define MAX_INPUT 1024
+#define MAX_NPC      65535
+#define MAX_PLAYERS  128
+#define MAX_INPUT    1024
+#define MAX_HEALTH   65535
+#define MAX_MANA     65535
+#define MAX_MOVEMENT 65535

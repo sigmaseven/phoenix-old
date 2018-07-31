@@ -8,6 +8,13 @@ class Player
 	std::string name;
 	std::string password;
 
+	uint16_t health;
+	uint16_t max_health;
+	uint16_t mana;
+	uint16_t max_mana;
+	uint16_t movement;
+	uint16_t max_movement;
+
 	uint8_t strength;
 	uint8_t perception;
 	uint8_t endurance;
@@ -26,7 +33,20 @@ public:
 	uint8_t getLuck(){ return this->luck; }
 	std::string getName(){ return this->name; }
 	bool getActive(){ return this->active; }
-	int  getFileDescriptor(){ return this->clientfd; }
+	int getFileDescriptor(){ return this->clientfd; }
+	uint16_t getHealth(){ return this->health; }
+	uint16_t getMaxHealth(){ return this->max_health; }
+	uint16_t getMana(){ return this->mana; }
+	uint16_t getMaxMana(){ return this->max_mana; }
+	uint16_t getMovement(){ return this->movement; }
+	uint16_t getMaxMovement(){ return this->max_movement; }
+
+	void setHealth(uint16_t hp){ this->health = hp; }
+	void setMaxHealth(uint16_t hp){ this->max_health = hp; }
+	void setMana(uint16_t mp){ this->mana = mp; }
+	void setMaxMana(uint16_t mp){ this->max_mana = mp; }
+	void setMovement(uint16_t mp){ this->movement = mp; }
+	void setMaxMovement(uint16_t mp){ this->max_movement = mp; }
 	void setActive(bool b){ this->active = b; }
 	void setName(std::string name){ this->name = name; }
 	void setPassword(std::string password){ this->password = password; }
