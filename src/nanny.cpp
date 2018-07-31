@@ -52,6 +52,7 @@ void Nanny::newPlayerMenu(int clientfd)
 		player->setMaxHealth(player->getEndurance() * 10);
 		player->setHealth(player->getEndurance() * 10);
 		player->setMovement(player->getAgility() * 20);
+		player->setMaxMovement(player->getAgility() * 20);
 		player->setActive(true);
 
 		std::cout << "Creating new player " << name << " with password " << password << std::endl;
@@ -74,7 +75,11 @@ std::string Nanny::getPlayerName(int clientfd)
 	Util::sendToPlayer(clientfd, std::string("Hey there, who are you? "));
 
 	std::vector<std::string> name = Util::getPlayerCommand(clientfd);
-	return name[0];
+	if(name.size() > 0 && name[0].length() > 0)
+	{
+		return name[0];
+	}
+	return std::string("");
 }
 
 std::string Nanny::getPlayerPassword(int clientfd)
@@ -86,7 +91,8 @@ std::string Nanny::getPlayerPassword(int clientfd)
 	Util::sendToPlayer(clientfd, std::string("What's your password? "));
 
 	std::vector<std::string> password = Util::getPlayerCommand(clientfd);
-	if(password[0].length() > 0)
+
+	if(password.size() > 0 && password[0].length() > 0)
 	{
 		char sha_hash[SHA_DIGEST_LENGTH * 2 + 1];
 		memset(sha_hash, 0, sizeof(sha_hash));
@@ -97,7 +103,7 @@ std::string Nanny::getPlayerPassword(int clientfd)
 		}
 		return std::string(sha_hash);
 	}
-	return password[0];
+	return std::string("");
 }
 
 std::vector<int> Nanny::rollStats(int clientfd)
