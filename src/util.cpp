@@ -62,7 +62,7 @@ std::vector<std::string> Util::getPlayerCommand(Player *player)
 	std::string line;
 	std::vector<std::string> command;
 	line = Util::readLineFromSocket(player->getFileDescriptor());
-	//std::cout << "Command received: " << line << std::endl;
+
 	command = Util::splitLine(line);
 	return command;
 }
@@ -73,7 +73,6 @@ std::vector<std::string> Util::getPlayerCommand(int clientfd)
 	std::vector<std::string> command;
 
 	line = Util::readLineFromSocket(clientfd);
-	//std::cout << "Command received: " << line << std::endl;
 
 	command = Util::splitLine(line);
 	return command;
@@ -203,31 +202,31 @@ std::string Util::getColorString(int foreground, std::string message)
 	return ss.str();
 }
 
-std::string Util::readFromFile(std::string filename)
+std::string Util::readFromFile(const char *filename)
 {
 	FILE *file;
 	char *buffer = (char *)malloc(sizeof(char) * 1024);
-
-	memset(&buffer, 0, 1024);
-
+	memset(buffer, 0, 1024);
 	std::stringstream contents;
 
-	file = fopen(filename.c_str(), "r");
+	if(!buffer)
+	{
+		Util::printError("Couldn't allocate file buffer!");
+		return std::string("");
+	}
+
+	file = fopen(filename, "r");
 
 	if(!file)
 	{
 		Util::printError("Error opening file!");
 		return std::string("");
 	}
-	else
-	{
-		while(fgets(buffer, 1024, file) > 0)
-		{
-			contents << buffer;
-		}
-	}
+
+	 while(fgets(buffer, 1024, file) > 0)
+		contents << buffer;
+
 	fclose(file);
 	free(buffer);
-
 	return contents.str();
 }

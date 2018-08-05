@@ -113,7 +113,9 @@ void Nanny::newPlayerMenu(int clientfd)
 void Nanny::printBanner(int clientfd)
 {
 	std::stringstream message;
-	std::string color = Util::getColorString(31,std::string("INSERT BANNER HERE\n\n"));
+	std::string banner_file;
+	banner_file = Util::readFromFile("./banner.txt");
+	std::string color = Util::getColorString(FG_YELLOW, banner_file);
 	message << color;
 	Util::sendToPlayer(clientfd, message.str());
 }
