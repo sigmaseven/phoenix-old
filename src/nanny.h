@@ -2,6 +2,8 @@
 #include "game.h"
 #include "server.h"
 
+class Player;
+
 enum NewPlayerMenuState
 {
 	NEW_CONNECTION,
@@ -19,4 +21,5 @@ public:
 	static std::string getPlayerPassword(int clientfd);
 	static void printBanner(int clientfd);
 	static std::vector<int> rollStats(int clientfd);
+	static void gameLoop(Player *player);
 };

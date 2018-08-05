@@ -1,6 +1,7 @@
 #include "nanny.h"
 #include "util.h"
 #include "playermanager.h"
+#include "command.h"
 
 void *Nanny::greetPlayer(void *clientfd)
 {
@@ -12,7 +13,7 @@ void *Nanny::greetPlayer(void *clientfd)
 	}
 	else
 	{
-		std::cerr << "Nanny received invalid client file descriptor!" << std::endl;
+		Util::printError("Nanny received invalid client file descriptor!");
 	}
 }
 
@@ -24,6 +25,7 @@ void Nanny::newPlayerMenu(int clientfd)
 	int ret;
 
 	Nanny::printBanner(clientfd);
+
 	while(name.length() < 1)
 	{
 		name = Nanny::getPlayerName(clientfd);
@@ -31,6 +33,7 @@ void Nanny::newPlayerMenu(int clientfd)
 		if(fcntl(clientfd, F_GETFD) == -1)
 			pthread_exit(&ret);
 	}
+
 	while(password.length() < 1)
 	{
 		password = Nanny::getPlayerPassword(clientfd);
@@ -39,43 +42,83 @@ void Nanny::newPlayerMenu(int clientfd)
 			pthread_exit(&ret);
 	}
 
-	std::vector<int> stats = Nanny::rollStats(clientfd);
-
 	Player *player = PlayerManager::findOpenPlayerSlot();
 
 	if(player)
 	{
-		player->setName(name);
-		player->setPassword(password);
+		PlayerManager::resetPlayer(player);
 		player->setFileDescriptor(clientfd);
 
-		player->setStrength(stats[0]);
-		player->setPerception(stats[1]);
-		player->setEndurance(stats[2]);
-		player->setCharisma(stats[3]);
-		player->setIntelligence(stats[4]);
-		player->setAgility(stats[5]);
-		player->setLuck(stats[6]);
+		if(!PlayerManager::isPlayerOnline(name))
+		{
+			player->setName(name);
+		}
+		else
+		{
+			Util::sendToPlayer(clientfd, std::string("Player is already logged in.\n"));
+			close(player->getFileDescriptor());
+			PlayerManager::resetPlayer(player);
+			pthread_exit(&ret);
+		}
 
-		player->setMaxHealth(player->getEndurance() * 10);
-		player->setHealth(player->getEndurance() * 10);
-		player->setMovement(player->getAgility() * 20);
-		player->setMaxMovement(player->getAgility() * 20);
-		player->setActive(true);
+		if(PlayerManager::playerFileExists(name))
+		{
+			Util::printServer("Player file found!");
+			PlayerManager::readPlayerFile(player, player->getName());
 
-		std::cout << "Creating new player " << name << " with password " << password << std::endl;
-		PlayerManager::writePlayerFile(player);
+			if(password.compare(player->getPassword()) == 0)
+			{
+				player->setActive(true);
+				Nanny::gameLoop(player);
+			}
+			else
+			{
+				Util::sendToPlayer(clientfd, std::string("Incorrect password.\n"));
+				close(player->getFileDescriptor());
+				PlayerManager::resetPlayer(player);
+				pthread_exit(&ret);
+			}
+		}
+		else
+		{
+			std::vector<int> stats = Nanny::rollStats(clientfd);
+			PlayerManager::resetPlayer(player);
+
+			player->setName(name);
+			player->setPassword(password);
+			player->setFileDescriptor(clientfd);
+
+			player->setStrength(stats[0]);
+			player->setPerception(stats[1]);
+			player->setEndurance(stats[2]);
+			player->setCharisma(stats[3]);
+			player->setIntelligence(stats[4]);
+			player->setAgility(stats[5]);
+			player->setLuck(stats[6]);
+
+			player->setMaxHealth(player->getEndurance() * 10);
+			player->setHealth(player->getEndurance() * 10);
+			player->setMovement(player->getAgility() * 20);
+			player->setMaxMovement(player->getAgility() * 20);
+			player->setActive(true);
+
+			std::cout << "Creating new player " << name << " with password " << password << std::endl;
+			PlayerManager::writePlayerFile(player);
+			Nanny::gameLoop(player);
+		}
 	}
 	else
 	{
-		std::cerr << "Reached maximum amount of players." << std::endl;
 		Util::sendToPlayer(clientfd, std::string("Maximum number of players reached.\n"));
 	}
 }
 
 void Nanny::printBanner(int clientfd)
 {
-	Util::sendToPlayer(clientfd, std::string("INSERT BANNER HERE\n\n"));
+	std::stringstream message;
+	std::string color = Util::getColorString(31,std::string("INSERT BANNER HERE\n\n"));
+	message << color;
+	Util::sendToPlayer(clientfd, message.str());
 }
 
 std::string Nanny::getPlayerName(int clientfd)
@@ -100,16 +143,9 @@ std::string Nanny::getPlayerPassword(int clientfd)
 
 	std::vector<std::string> password = Util::getPlayerCommand(clientfd);
 
-	if(password.size() > 0 && password[0].length() > 0)
+	if(password.size() > 0 && password[0].length() > 0 && Util::validatePassword(password[0]))
 	{
-		char sha_hash[SHA_DIGEST_LENGTH * 2 + 1];
-		memset(sha_hash, 0, sizeof(sha_hash));
-		SHA1((const unsigned char *)password[0].c_str(), password[0].length(), hash);
-		for(x = 0; x < SHA_DIGEST_LENGTH; x++)
-		{
-			sprintf(&sha_hash[x * 2], "%02x", (unsigned int)hash[x]);
-		}
-		return std::string(sha_hash);
+		return Util::hash(password[0]);
 	}
 	return std::string("");
 }
@@ -123,6 +159,7 @@ std::vector<int> Nanny::rollStats(int clientfd)
 	struct timeval tp;
 	gettimeofday(&tp, NULL);
 	unsigned int seed = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+	int ret;
 
 	while(!accepted)
 	{
@@ -229,6 +266,8 @@ std::vector<int> Nanny::rollStats(int clientfd)
 		}
 		else
 		{
+			Util::printServer("Player disconnected");
+			pthread_exit(&ret);
 		}
 	}
 	Util::sendToPlayer(clientfd, std::string("Ok.\n"));
@@ -242,4 +281,20 @@ std::vector<int> Nanny::rollStats(int clientfd)
 	stats.push_back(agility);
 	stats.push_back(luck);
 	return stats;
+}
+
+void Nanny::gameLoop(Player *player)
+{
+	int ret;
+
+	while(player->getActive())
+	{
+		std::stringstream prompt;
+		std::vector<std::string> command;
+		//prompt << std::endl << "HP <" << player->getHealth() << "/" << player->getMaxHealth() << "> Movement <" << player->getMovement() << "/" << player->getMaxMovement() << "> ";
+		//Util::sendToPlayer(player->getFileDescriptor(), prompt.str());
+		Commands::prompt(player);
+		command = Util::getPlayerCommand(player->getFileDescriptor());
+		Commands::parse(player, command);
+	}
 }

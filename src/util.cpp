@@ -21,6 +21,8 @@ std::string Util::recvFromPlayer(int clientfd, int length)
 {
 	char buffer[MAX_INPUT_SIZE + 1];
 	int status;
+	int ret;
+	Player *player = PlayerManager::findPlayerByDescriptor(clientfd);
 
 	if(clientfd < 0)
 	{
@@ -30,7 +32,6 @@ std::string Util::recvFromPlayer(int clientfd, int length)
 	if(fcntl(clientfd, F_GETFD) != -1)
 	{
 		memset(&buffer, 0, sizeof(buffer));
-
 		status = recv(clientfd, &buffer, length, 0);
 	}
 
@@ -39,14 +40,17 @@ std::string Util::recvFromPlayer(int clientfd, int length)
 		std::cerr << "Error retrieving input from player!" << std::endl;
 		std::string received("");
 		perror("recv");
-		return received;
+		close(clientfd);
+		pthread_exit(&ret);
+		//return received;
 	}
 	else if(status == 0) //player disconnected.
 	{
 		std::cout << "Player disconnected." << std::endl;
-		//PlayerManager::resetPlayer(int clientfd);
+		PlayerManager::resetPlayer(player);
 		close(clientfd);
-		return std::string("");
+		pthread_exit(&ret);
+		//return std::string("");
 	}
 
 	std::string received(buffer);
@@ -133,4 +137,68 @@ int Util::rollDice(int number, int size)
 	}
 
 	return total;
+}
+
+long Util::getCurrentTime()
+{
+	long time;
+	struct timeval tp;
+	gettimeofday(&tp, NULL);
+	time = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+	return time;
+}
+void Util::printError(const char *message)
+{
+	std::cerr << "[!] " << message << std::endl;
+}
+
+void Util::printServer(const char *message)
+{
+	std::cout << "[+] " << message << std::endl;
+}
+
+std::string Util::hash(std::string string)
+{
+	unsigned char hash[SHA_DIGEST_LENGTH];
+	int x;
+
+	memset(hash, 0, sizeof(hash));
+
+	if(string.length() > 0)
+	{
+		char sha_hash[SHA_DIGEST_LENGTH * 2 + 1];
+		memset(sha_hash, 0, sizeof(sha_hash));
+		SHA1((const unsigned char *)string.c_str(), string.length(), hash);
+
+		for(x = 0; x < SHA_DIGEST_LENGTH; x++)
+		{
+			sprintf(&sha_hash[x * 2], "%02x", (unsigned int)hash[x]);
+		}
+		return std::string(sha_hash);
+	}
+	return std::string("");
+}
+
+bool Util::validatePassword(std::string password)
+{
+	int x;
+
+	for(x = 0; x < password.length(); x++)
+	{
+		char c = password[x];
+
+		if(c < 32 || c > 126)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+std::string Util::getColorString(int foreground, std::string message)
+{
+	std::stringstream ss;
+	ss << "\033[38;" << foreground << ";1m" << message << "\033[38;37;0m";
+	return ss.str();
 }

@@ -28,3 +28,15 @@
 #define MAX_HEALTH   	65535
 #define MAX_MANA     	65535
 #define MAX_MOVEMENT 	65535
+
+enum Color
+{
+	FG_BLACK = 30,
+	FG_RED,
+	FG_GREEN,
+	FG_YELLOW,
+	FG_BLUE,
+	FG_MAGENTA,
+	FG_CYAN,
+	FG_GREY
+};
