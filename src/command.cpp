@@ -1,6 +1,6 @@
 #include "command.h"
 
-std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east", "west", "save" };
+std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east", "west", "up", "down", "save", "who", "score" };
 
 void Commands::prompt(Player *player)
 {
@@ -83,7 +83,16 @@ void Commands::parse(Player *player, std::vector<std::string> commands)
 			}
 			Commands::doChat(player, message.str());
 		}
+		if(found_commands[0] == "look") { Commands::doLook(player); }
 		if(found_commands[0] == "save") { Commands::doSave(player); }
+		if(found_commands[0] == "who") { Commands::doWho(player); }
+		if(found_commands[0] == "up") { Commands::doUp(player); }
+		if(found_commands[0] == "down") { Commands::doDown(player); }
+		if(found_commands[0] == "north") { Commands::doNorth(player); }
+		if(found_commands[0] == "south") { Commands::doSouth(player); }
+		if(found_commands[0] == "east") { Commands::doEast(player); }
+		if(found_commands[0] == "west") { Commands::doWest(player); }
+		if(found_commands[0] == "score") { Commands::doScore(player); }
 	}
 }
 
@@ -116,4 +125,182 @@ void Commands::doSave(Player *player)
 	Util::sendToPlayer(player, message);
 	PlayerManager::writePlayerFile(player);
 	Util::sendToPlayer(player, confirm);
+}
+
+void Commands::doLook(Player *player)
+{
+	uint32_t room_number = player->getRoom();
+	Room *room = AreaManager::findRoom(room_number);
+
+	if(!room)
+	{
+		Util::printError("doLook: invalid room number");
+		return;
+	}
+	std::stringstream title;
+	title << "\n=" << Util::getColorString(FG_BLUE, room->getTitle()) << "=" << std::endl;
+	std::string desc = Util::getColorString(FG_GREEN, room->getDescription()) + "\n";
+
+	Util::sendToPlayer(player, title.str());
+	Util::sendToPlayer(player, desc);
+	Util::sendToPlayer(player, Util::getColorString(FG_YELLOW, std::string("Exits:\n")));
+	if(!room->exit_north && !room->exit_south && !room->exit_east && !room->exit_west && !room->exit_up && !room->exit_down)
+	{
+		Util::sendToPlayer(player, std::string("None.\n\n"));
+	}
+	if(room->exit_north)
+	{
+		Util::sendToPlayer(player, std::string("North\n"));
+	}
+	if(room->exit_south)
+	{
+		Util::sendToPlayer(player, std::string("South\n"));
+	}
+	if(room->exit_east)
+	{
+		Util::sendToPlayer(player, std::string("East\n"));
+	}
+	if(room->exit_west)
+	{
+		Util::sendToPlayer(player, std::string("West\n"));
+	}
+	if(room->exit_up)
+	{
+		Util::sendToPlayer(player, std::string("Up\n"));
+	}
+	if(room->exit_down)
+	{
+		Util::sendToPlayer(player, std::string("Down\n"));
+	}
+}
+
+void Commands::doWho(Player *player)
+{
+	std::stringstream message;
+	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
+	int x;
+
+	message << std::endl;
+	message << Util::getColorString(FG_CYAN, std::string(" ----------------------------------------------------------------------------- ")) << std::endl;
+	message << Util::getColorString(FG_CYAN, std::string("|                             PLAYERS ONLINE                                  |")) << std::endl;
+	message << Util::getColorString(FG_CYAN, std::string(" ----------------------------------------------------------------------------- ")) << std::endl;
+
+	for(x = 0; x < active_players.size(); x++)
+	{
+		message << "   " << active_players[x]->getName() << std:: endl;
+	}
+
+	message << std::endl << active_players.size() << " players online." << std::endl;
+	message << std::endl;
+
+	Util::sendToPlayer(player, message.str());
+}
+
+void Commands::doScore(Player *player)
+{
+	std::stringstream message;
+	std::string name = player->getName();
+	std::string strength = std::to_string(player->getStrength());
+	std::string perception = std::to_string(player->getPerception());
+	std::string endurance = std::to_string(player->getEndurance());
+	std::string charisma = std::to_string(player->getCharisma());
+	std::string intelligence = std::to_string(player->getIntelligence());
+	std::string agility = std::to_string(player->getAgility());
+	std::string luck = std::to_string(player->getLuck());
+
+	message << "Name:\t\t" << name << std::endl;
+	message << "Strength:\t" << strength << std::endl;
+	message << "Perception:\t" << perception << std::endl;
+	message << "Endurance:\t" << endurance << std::endl;
+	message << "Charisma:\t" << charisma << std::endl;
+	message << "Intelligence:\t" << intelligence << std::endl;
+	message << "Agility:\t" << agility << std::endl;
+	message << "Luck:\t\t" << luck << std::endl;
+	//std:: string color = Util::getColorString(FG_CYAN, message.str());
+
+	Util::sendToPlayer(player, message.str());
+}
+
+void Commands::doUp(Player *player)
+{
+	Room *room = AreaManager::findRoom(player->getRoom());
+	if(!room->exit_up)
+	{
+		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+		Util::sendToPlayer(player, error);
+		return;
+	}
+
+	player->moveToRoom(room->room_up, EXIT_UP);
+	Commands::doLook(player);
+}
+
+void Commands::doDown(Player *player)
+{
+	Room *room = AreaManager::findRoom(player->getRoom());
+	if(!room->exit_down)
+	{
+		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+		Util::sendToPlayer(player, error);
+		return;
+	}
+
+	player->moveToRoom(room->room_down, EXIT_DOWN);
+	Commands::doLook(player);
+}
+
+void Commands::doNorth(Player *player)
+{
+	Room *room = AreaManager::findRoom(player->getRoom());
+	if(!room->exit_north)
+	{
+		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+		Util::sendToPlayer(player, error);
+		return;
+	}
+
+	player->moveToRoom(room->room_north, EXIT_NORTH);
+	Commands::doLook(player);
+}
+
+void Commands::doSouth(Player *player)
+{
+	Room *room = AreaManager::findRoom(player->getRoom());
+	if(!room->exit_south)
+	{
+		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+		Util::sendToPlayer(player, error);
+		return;
+	}
+
+	player->moveToRoom(room->room_south, EXIT_SOUTH);
+	Commands::doLook(player);
+}
+
+void Commands::doEast(Player *player)
+{
+	Room *room = AreaManager::findRoom(player->getRoom());
+	if(!room->exit_east)
+	{
+		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+		Util::sendToPlayer(player, error);
+		return;
+	}
+
+	player->moveToRoom(room->room_east, EXIT_EAST);
+	Commands::doLook(player);
+}
+
+void Commands::doWest(Player *player)
+{
+	Room *room = AreaManager::findRoom(player->getRoom());
+	if(!room->exit_west)
+	{
+		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+		Util::sendToPlayer(player, error);
+		return;
+	}
+
+	player->moveToRoom(room->room_west, EXIT_WEST);
+	Commands::doLook(player);
 }

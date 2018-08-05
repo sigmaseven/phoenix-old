@@ -97,6 +97,7 @@ void Nanny::newPlayerMenu(int clientfd)
 			player->setHealth(player->getEndurance() * 10);
 			player->setMovement(player->getAgility() * 20);
 			player->setMaxMovement(player->getAgility() * 20);
+			player->setRoom(0);
 			player->setActive(true);
 
 			std::cout << "Creating new player " << name << " with password " << password << std::endl;

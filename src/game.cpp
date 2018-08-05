@@ -3,12 +3,14 @@
 #include "playermanager.h"
 #include "util.h"
 #include "command.h"
+#include "areamanager.h"
 
 int main(int argc, char *argv[])
 {
 	pthread_t player_manager_thread;
 	void *blank_thread_command;
 
+	AreaManager::init();
 	PlayerManager::init();
 	pthread_create(&player_manager_thread, NULL, &PlayerManager::update, blank_thread_command);
 	Server *server = new Server();

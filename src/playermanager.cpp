@@ -48,6 +48,7 @@ void PlayerManager::writePlayerFile(Player *player)
 	j["max_health"] = player->getMaxHealth();
 	j["movement"] = player->getMovement();
 	j["max_movement"] = player->getMaxMovement();
+	j["room"] = player->getRoom();
 	j["stats"]["strength"] = player->getStrength();
 	j["stats"]["perception"] = player->getPerception();
 	j["stats"]["endurance"] = player->getEndurance();
@@ -55,7 +56,6 @@ void PlayerManager::writePlayerFile(Player *player)
 	j["stats"]["intelligence"] = player->getIntelligence();
 	j["stats"]["agility"] = player->getAgility();
 	j["stats"]["luck"] = player->getLuck();
-
 	std::cout << j.dump() << std::endl;
 	directory = opendir("players");
 	if(!directory)
@@ -113,6 +113,7 @@ void PlayerManager::readPlayerFile(Player *player, std::string name)
 	player->setMaxHealth(j["max_health"]);
 	//player->setMana(j["mana"]);
 	//player->setMaxMana(j["max_mana"]);
+	player->setRoom(j["room"]);
 	player->setMovement(j["movement"]);
 	player->setMaxMovement(j["max_movement"]);
 	player->setPassword(j["password"]);
@@ -235,4 +236,9 @@ Player *PlayerManager::findPlayerByDescriptor(int fd)
 		}
 	}
 	return NULL;
+}
+
+void Player::moveToRoom(uint32_t room_number, Exit direction)
+{
+	this->room = room_number;
 }

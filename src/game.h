@@ -28,6 +28,7 @@
 #define MAX_HEALTH   	65535
 #define MAX_MANA     	65535
 #define MAX_MOVEMENT 	65535
+#define MAX_ROOMS	65535
 
 enum Color
 {
@@ -39,4 +40,14 @@ enum Color
 	FG_MAGENTA,
 	FG_CYAN,
 	FG_GREY
+};
+
+enum Exit
+{
+	EXIT_NORTH,
+	EXIT_SOUTH,
+	EXIT_EAST,
+	EXIT_WEST,
+	EXIT_UP,
+	EXIT_DOWN
 };

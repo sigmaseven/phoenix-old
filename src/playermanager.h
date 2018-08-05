@@ -26,6 +26,7 @@ class Player
 
 	bool active;
 	int clientfd;
+	uint32_t room;
 public:
 	uint8_t getStrength(){ return this->strength; }
 	uint8_t getPerception(){ return this->perception; }
@@ -44,6 +45,7 @@ public:
 	uint16_t getMovement(){ return this->movement; }
 	uint16_t getMaxMovement(){ return this->max_movement; }
 	std::string getPassword(){ return this->password; }
+	uint32_t getRoom(){ return this->room; }
 
 	void setHealth(uint16_t hp){ this->health = hp; }
 	void setMaxHealth(uint16_t hp){ this->max_health = hp; }
@@ -58,11 +60,13 @@ public:
 	void setIntelligence(uint8_t stat){ this->intelligence = stat; }
 	void setAgility(uint8_t stat){ this->agility = stat; }
 	void setLuck(uint8_t stat){ this->luck = stat; }
-
+	void setRoom(uint32_t room_number) { this->room = room_number; }
 	void setActive(bool b){ this->active = b; }
 	void setName(std::string name){ this->name = name; }
 	void setPassword(std::string password){ this->password = password; }
 	void setFileDescriptor(int fd){ this->clientfd = fd; }
+
+	void moveToRoom(uint32_t room_number, Exit direction);
 };
 
 class PlayerManager
