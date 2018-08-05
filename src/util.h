@@ -11,6 +11,7 @@ class Util
 	static unsigned int seed;
 public:
 	static int sendToPlayer(int fd, std::string message);
+	static int sendToPlayer(Player *player, std::string message);
 	static std::string recvFromPlayer(int fd, int length);
 	static std::vector<std::string> getPlayerCommand(Player *player);
 	static std::string readLineFromSocket(int fd);

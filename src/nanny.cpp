@@ -123,10 +123,11 @@ void Nanny::printBanner(int clientfd)
 std::string Nanny::getPlayerName(Player *player)
 {
 	int clientfd = player->getFileDescriptor();
-	Util::sendToPlayer(clientfd, std::string("Hey there, who are you? "));
+	std::string message = Util::getColorString(FG_CYAN, "Hey there, who are you? ");
+	Util::sendToPlayer(clientfd, message);
 
 	std::vector<std::string> name = Util::getPlayerCommand(clientfd);
-	printf("%02x", name[0][0]);
+
 	if(name.size() > 0 && name[0].length() > 0)
 	{
 		return name[0];
@@ -140,8 +141,8 @@ std::string Nanny::getPlayerPassword(Player *player)
 	std::stringstream ss;
 	int x;
 	int clientfd = player->getFileDescriptor();
-
-	Util::sendToPlayer(clientfd, std::string("What's your password? "));
+	std::string message = Util::getColorString(FG_CYAN, "What's your password? ");
+	Util::sendToPlayer(clientfd, message);
 
 	std::vector<std::string> password = Util::getPlayerCommand(clientfd);
 
@@ -254,9 +255,11 @@ std::vector<int> Nanny::rollStats(int clientfd)
 		}
 		std::stringstream message;
 		message << "\n####### Rolling stats... #######\n\n\tStrength:\t" << strength << "\n\tPerception:\t" << perception << "\n\tEndurance:\t" << endurance << "\n\tCharisma:\t" << charisma << "\n\tIntelligence:\t" << intelligence << "\n\tAgility\t\t" << agility << "\n\tLuck:\t\t" << luck << "\n\n";
+		message << "################################\n\n";
+		std::string color = Util::getColorString(FG_GREY, message.str());
+		std::string confirm = Util::getColorString(FG_CYAN, std::string("Are these stats OK? (y/N) "));
 		Util::sendToPlayer(clientfd, message.str());
-		Util::sendToPlayer(clientfd, std::string("################################\n\n"));
-		Util::sendToPlayer(clientfd, std::string("Are these stats OK? (y/n) "));
+		Util::sendToPlayer(clientfd, confirm);
 		std::vector<std::string> command = Util::getPlayerCommand(clientfd);
 
 		if(command.size() > 0)

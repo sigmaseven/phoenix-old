@@ -9,4 +9,5 @@ public:
 	static void parse(Player *player, std::vector<std::string> commands);
 	static void prompt(Player *player);
 	static void doChat(Player *player, std::string message);
+	static void doSave(Player *player);
 };

@@ -17,6 +17,20 @@ int32_t Util::sendToPlayer(int clientfd, std::string message)
 	return status;
 }
 
+int32_t Util::sendToPlayer(Player *player, std::string message)
+{
+	if(player)
+	{
+		int clientfd = player->getFileDescriptor();
+		int status = Util::sendToPlayer(clientfd, message);
+		return status;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
 std::string Util::recvFromPlayer(int clientfd, int length)
 {
 	char buffer[MAX_INPUT_SIZE + 1];

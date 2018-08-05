@@ -1,6 +1,6 @@
 #include "command.h"
 
-std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east", "west" };
+std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east", "west", "save" };
 
 void Commands::prompt(Player *player)
 {
@@ -83,6 +83,7 @@ void Commands::parse(Player *player, std::vector<std::string> commands)
 			}
 			Commands::doChat(player, message.str());
 		}
+		if(found_commands[0] == "save") { Commands::doSave(player); }
 	}
 }
 
@@ -93,15 +94,26 @@ void Commands::doChat(Player *player, std::string message)
 	std::vector<Player *> players = PlayerManager::getActivePlayers();
 	std::stringstream ss;
 
-	ss << std::endl << std::endl;
+	ss << std::endl;
 	ss << Util::getColorString(FG_GREEN, "[");
 	ss << Util::getColorString(FG_GREY, "Chat");
 	ss << Util::getColorString(FG_GREEN, "] ");
+	ss << Util::getColorString(FG_GREEN, "[");
 	ss << Util::getColorString(FG_YELLOW, name) << " ";
-	ss << message << std::endl;
+	ss << Util::getColorString(FG_GREEN, "]");
+	ss << message << std::endl << std::endl;
 
 	for(x = 0; x < players.size(); x++)
 	{
 		Util::sendToPlayer(players[x]->getFileDescriptor(), ss.str());
 	}
+}
+
+void Commands::doSave(Player *player)
+{
+	std::string message = Util::getColorString(FG_YELLOW, std::string("Saving..."));
+	std::string confirm = Util::getColorString(FG_GREY, std::string("Save successful."));
+	Util::sendToPlayer(player, message);
+	PlayerManager::writePlayerFile(player);
+	Util::sendToPlayer(player, confirm);
 }
