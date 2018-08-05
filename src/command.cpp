@@ -99,8 +99,8 @@ void Commands::doChat(Player *player, std::string message)
 	ss << Util::getColorString(FG_GREY, "Chat");
 	ss << Util::getColorString(FG_GREEN, "] ");
 	ss << Util::getColorString(FG_GREEN, "[");
-	ss << Util::getColorString(FG_YELLOW, name) << " ";
-	ss << Util::getColorString(FG_GREEN, "]");
+	ss << Util::getColorString(FG_YELLOW, name);
+	ss << Util::getColorString(FG_GREEN, "] ");
 	ss << message << std::endl << std::endl;
 
 	for(x = 0; x < players.size(); x++)
@@ -111,8 +111,8 @@ void Commands::doChat(Player *player, std::string message)
 
 void Commands::doSave(Player *player)
 {
-	std::string message = Util::getColorString(FG_YELLOW, std::string("Saving..."));
-	std::string confirm = Util::getColorString(FG_GREY, std::string("Save successful."));
+	std::string message = Util::getColorString(FG_YELLOW, std::string("Saving...\n"));
+	std::string confirm = Util::getColorString(FG_GREY, std::string("Save successful.\n"));
 	Util::sendToPlayer(player, message);
 	PlayerManager::writePlayerFile(player);
 	Util::sendToPlayer(player, confirm);
