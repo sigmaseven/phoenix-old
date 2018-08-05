@@ -23,33 +23,30 @@ void Nanny::newPlayerMenu(int clientfd)
 	std::string password = "";
 	uint8_t strength, perception, endurance, charisma, intelligence, agility, luck;
 	int ret;
-
+	Player *player = PlayerManager::findOpenPlayerSlot();
+	player->setFileDescriptor(clientfd);
 	Nanny::printBanner(clientfd);
 
 	while(name.length() < 1)
 	{
-		name = Nanny::getPlayerName(clientfd);
-
-		if(fcntl(clientfd, F_GETFD) == -1)
-			pthread_exit(&ret);
+		name = Nanny::getPlayerName(player);
 	}
+
+	player->setName(name);
 
 	while(password.length() < 1)
 	{
-		password = Nanny::getPlayerPassword(clientfd);
-
-		if(fcntl(clientfd, F_GETFD) == -1)
-			pthread_exit(&ret);
+		password = Nanny::getPlayerPassword(player);
 	}
 
-	Player *player = PlayerManager::findOpenPlayerSlot();
+	player->setPassword(password);
 
 	if(player)
 	{
 		PlayerManager::resetPlayer(player);
 		player->setFileDescriptor(clientfd);
 
-		if(!PlayerManager::isPlayerOnline(name))
+		if(name.size() > 0 && !PlayerManager::isPlayerOnline(name))
 		{
 			player->setName(name);
 		}
@@ -121,11 +118,13 @@ void Nanny::printBanner(int clientfd)
 	Util::sendToPlayer(clientfd, message.str());
 }
 
-std::string Nanny::getPlayerName(int clientfd)
+std::string Nanny::getPlayerName(Player *player)
 {
+	int clientfd = player->getFileDescriptor();
 	Util::sendToPlayer(clientfd, std::string("Hey there, who are you? "));
 
 	std::vector<std::string> name = Util::getPlayerCommand(clientfd);
+	printf("%02x", name[0][0]);
 	if(name.size() > 0 && name[0].length() > 0)
 	{
 		return name[0];
@@ -133,11 +132,12 @@ std::string Nanny::getPlayerName(int clientfd)
 	return std::string("");
 }
 
-std::string Nanny::getPlayerPassword(int clientfd)
+std::string Nanny::getPlayerPassword(Player *player)
 {
 	unsigned char hash[SHA_DIGEST_LENGTH];
 	std::stringstream ss;
 	int x;
+	int clientfd = player->getFileDescriptor();
 
 	Util::sendToPlayer(clientfd, std::string("What's your password? "));
 

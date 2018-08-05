@@ -152,25 +152,28 @@ bool PlayerManager::playerFileExists(std::string name)
 
 void PlayerManager::resetPlayer(Player *player)
 {
-	player->setName(std::string(""));
-	player->setPassword(std::string(""));
-	player->setFileDescriptor(-1);
+	if(player)
+	{
+		player->getName().clear();
+		player->getPassword().clear();
+		player->setFileDescriptor(-1);
 
-	player->setHealth(0);
-	player->setMaxHealth(0);
-	player->setMana(0);
-	player->setMaxMana(0);
-	player->setMovement(0);
-	player->setMaxMovement(0);
-	player->setStrength(0);
-	player->setPerception(0);
-	player->setEndurance(0);
-	player->setCharisma(0);
-	player->setIntelligence(0);
-	player->setAgility(0);
-	player->setLuck(0);
+		player->setHealth(0);
+		player->setMaxHealth(0);
+		player->setMana(0);
+		player->setMaxMana(0);
+		player->setMovement(0);
+		player->setMaxMovement(0);
+		player->setStrength(0);
+		player->setPerception(0);
+		player->setEndurance(0);
+		player->setCharisma(0);
+		player->setIntelligence(0);
+		player->setAgility(0);
+		player->setLuck(0);
 
-	player->setActive(false);
+		player->setActive(false);
+	}
 }
 
 std::vector<Player *> PlayerManager::getActivePlayers()

@@ -202,3 +202,32 @@ std::string Util::getColorString(int foreground, std::string message)
 	ss << "\033[38;" << foreground << ";1m" << message << "\033[38;37;0m";
 	return ss.str();
 }
+
+std::string Util::readFromFile(std::string filename)
+{
+	FILE *file;
+	char *buffer = (char *)malloc(sizeof(char) * 1024);
+
+	memset(&buffer, 0, 1024);
+
+	std::stringstream contents;
+
+	file = fopen(filename.c_str(), "r");
+
+	if(!file)
+	{
+		Util::printError("Error opening file!");
+		return std::string("");
+	}
+	else
+	{
+		while(fgets(buffer, 1024, file) > 0)
+		{
+			contents << buffer;
+		}
+	}
+	fclose(file);
+	free(buffer);
+
+	return contents.str();
+}

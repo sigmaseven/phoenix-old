@@ -23,4 +23,5 @@ public:
 	static bool validatePassword(std::string password);
 	static long getCurrentTime();
 	static std::string getColorString(int forground, std::string message);
+	static std::string readFromFile(std::string filename);
 };
