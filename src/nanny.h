@@ -1,16 +1,8 @@
 #pragma once
-#include "game.h"
-#include "server.h"
+#include "./game.h"
+#include "./server.h"
 
 class Player;
-
-enum NewPlayerMenuState
-{
-	NEW_CONNECTION,
-	GET_PLAYER_NAME,
-	GET_PLAYER_PASSWORD,
-	GET_PLAYER_STATS
-};
 
 class Nanny
 {

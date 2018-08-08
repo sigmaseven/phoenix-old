@@ -1,7 +1,7 @@
-#include "nanny.h"
-#include "util.h"
-#include "playermanager.h"
-#include "command.h"
+#include "./nanny.h"
+#include "./util.h"
+#include "./playermanager.h"
+#include "./command.h"
 
 void *Nanny::greetPlayer(void *clientfd)
 {

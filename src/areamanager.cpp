@@ -1,6 +1,8 @@
 #include "areamanager.h"
 
-std::vector<Room *> AreaManager::rooms;
+std::vector< Room *> AreaManager::rooms;
+std::vector< Area *> AreaManager::areas;
+std::vector< RoomDescription *> AreaManager::room_descriptions;
 
 void AreaManager::init()
 {
@@ -14,6 +16,9 @@ void AreaManager::init()
 		rooms.push_back(room);
 	}
 
+	AreaManager::loadRoomFiles();
+	AreaManager::generateArea();
+/*
 	rooms[0]->setTitle(std::string("The Room"));
 	std::stringstream desc;
 	desc << "You stand in an oddly familiar brick-walled\n";
@@ -33,6 +38,7 @@ void AreaManager::init()
 	rooms[1]->setActive(true);
 
 	AreaManager::createExit(0, 1, EXIT_UP);
+*/
 }
 
 Room *AreaManager::findRoom(uint32_t room_id)
@@ -43,6 +49,20 @@ Room *AreaManager::findRoom(uint32_t room_id)
 		return NULL;
 	}
 	return rooms[room_id];
+}
+
+Room *AreaManager::findAvailableRoom()
+{
+	int x;
+	for(x = 0; x < rooms.size(); x++)
+	{
+		if(!rooms[x]->getActive())
+		{
+			std::cout << "findAvailableRoom: found room " << rooms[x]->getID() << std::endl;
+			return rooms[x];
+		}
+	}
+	return NULL;
 }
 
 void AreaManager::createExit(uint32_t source_room, uint32_t dest_room, Exit direction)
@@ -101,5 +121,64 @@ void AreaManager::createExit(uint32_t source_room, uint32_t dest_room, Exit dire
 			dst->exit_up = true;
 			dst->room_up = src->getID();
 			break;
+	}
+}
+
+Area *AreaManager::generateArea()
+{
+	Area *area = new Area();
+	return area;
+}
+
+Exit AreaManager::generateRandomDirection()
+{
+	int roll = Util::rollDice(1,6);
+	switch(roll)
+	{
+		default:
+			break;
+		case 1:
+			return EXIT_NORTH;
+		case 2:
+			return EXIT_SOUTH;
+		case 3:
+			return EXIT_EAST;
+		case 4:
+			return EXIT_WEST;
+		case 5:
+			return EXIT_UP;
+		case 6:
+			return EXIT_DOWN;
+	}
+}
+
+void AreaManager::loadRoomFiles()
+{
+	DIR *directory;
+	int count;
+	struct dirent *file;
+
+	directory = opendir("./rooms");
+
+	if(directory)
+	{
+		while(file = readdir(directory))
+		{
+			if(std::string(file->d_name).find(std::string(".json")) != std::string::npos)
+			{
+				std::string contents;
+				std::stringstream filename;
+				filename << "./rooms/" << file->d_name;
+				std::cout << "opening file " << filename.str() << std::endl;
+
+				contents = Util::readFromFile(filename.str().c_str());
+				std::cout << contents;
+				RoomDescription *desc = new RoomDescription();
+				auto j = nlohmann::json::parse(contents.c_str());
+				desc->title = j["title"];
+				desc->description = j["description"];
+				room_descriptions.push_back(desc);
+			}
+		}
 	}
 }

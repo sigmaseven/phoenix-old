@@ -1,6 +1,14 @@
 #pragma once
-#include "game.h"
-#include "playermanager.h"
+#include "./game.h"
+#include "./playermanager.h"
+class AreaManager;
+
+class RoomDescription
+{
+public:
+	std::string title;
+	std::string description;
+};
 
 class Room
 {
@@ -22,6 +30,7 @@ public:
 	uint32_t room_west;
 	uint32_t room_up;
 	uint32_t room_down;
+	bool visited;
 
 	uint32_t getID(){ return this->id; }
 	void setID(uint32_t new_id) { this->id = new_id; }
@@ -30,6 +39,7 @@ public:
 	std::string getDescription(){ return this->description; }
 	void setDescription(std::string new_desc){ this->description = new_desc; }
 	void setActive(bool option){ this->active = option; }
+	bool getActive() { return this->active; }
 
 	Room()
 	{
@@ -53,15 +63,25 @@ public:
 
 class Area
 {
+public:
 	uint32_t start_room;
-	std::vector< std::vector< Room *> > rooms;
+	int area_width;
+	int area_height;
+	std::vector<Room *> rooms;
 };
 
 class AreaManager
 {
-	static std::vector<Room *> rooms;
 public:
+	static std::vector<Room *> rooms;
+	static std::vector<Area *> areas;
+	static std::vector<RoomDescription *> room_descriptions;
+
 	static void init();
 	static Room *findRoom(uint32_t room_id);
 	static void createExit(uint32_t source_room, uint32_t dest_room, Exit direction);
+	static Area *generateArea();
+	static Room *findAvailableRoom();
+	static Exit generateRandomDirection();
+	static void loadRoomFiles();
 };

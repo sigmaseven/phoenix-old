@@ -1,4 +1,4 @@
-#include "playermanager.h"
+#include "./playermanager.h"
 
 std::vector<Player *> PlayerManager::players;
 long PlayerManager::update_timestamp;

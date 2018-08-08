@@ -1,7 +1,7 @@
 #pragma once
-#include "game.h"
-#include "playermanager.h"
-#include "areamanager.h"
+#include "./game.h"
+#include "./playermanager.h"
+#include "./areamanager.h"
 
 class Commands
 {

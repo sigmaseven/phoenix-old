@@ -1,4 +1,4 @@
-#include "command.h"
+#include "./command.h"
 
 std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east", "west", "up", "down", "save", "who", "score" };
 

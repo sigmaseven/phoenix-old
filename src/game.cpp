@@ -1,9 +1,9 @@
-#include "game.h"
-#include "server.h"
-#include "playermanager.h"
-#include "util.h"
-#include "command.h"
-#include "areamanager.h"
+#include "./game.h"
+#include "./server.h"
+#include "./playermanager.h"
+#include "./util.h"
+#include "./command.h"
+#include "./areamanager.h"
 
 int main(int argc, char *argv[])
 {

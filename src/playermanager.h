@@ -1,8 +1,8 @@
 #pragma once
-#include "game.h"
-#include "server.h"
-#include "nanny.h"
-#include "util.h"
+#include "./game.h"
+#include "./server.h"
+#include "./nanny.h"
+#include "./util.h"
 
 class Player
 {
