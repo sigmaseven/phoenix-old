@@ -29,6 +29,7 @@
 #define MAX_MANA     	65535
 #define MAX_MOVEMENT 	65535
 #define MAX_ROOMS	65535
+#define MAX_AREAS	32768
 
 enum Color
 {
@@ -49,5 +50,6 @@ enum Exit
 	EXIT_EAST,
 	EXIT_WEST,
 	EXIT_UP,
-	EXIT_DOWN
+	EXIT_DOWN,
+	EXIT_TELEPORT
 };

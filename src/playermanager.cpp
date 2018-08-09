@@ -13,6 +13,7 @@ void PlayerManager::init()
 	{
 		Player *player = new Player();
 		player->setActive(false);
+		player->setRoom(1);
 		players.push_back(player);
 	}
 
@@ -172,7 +173,7 @@ void PlayerManager::resetPlayer(Player *player)
 		player->setIntelligence(0);
 		player->setAgility(0);
 		player->setLuck(0);
-
+		player->setRoom(1);
 		player->setActive(false);
 	}
 }
@@ -240,5 +241,9 @@ Player *PlayerManager::findPlayerByDescriptor(int fd)
 
 void Player::moveToRoom(uint32_t room_number, Exit direction)
 {
-	this->room = room_number;
+	std::cout << "moving to room number " << room_number << std::endl;
+	if(room_number > 0)
+	{
+		this->room = room_number;
+	}
 }

@@ -20,4 +20,8 @@ public:
 	static void doSouth(Player *player);
 	static void doEast(Player *player);
 	static void doWest(Player *player);
+	static void doMove(Player *player, Exit direction);
+	static void doAutoDig(Player *player);
+	static void doRStat(Player *player);
+	static void doGoto(Player *player, std::vector<std::string> commands);
 };

@@ -64,10 +64,31 @@ public:
 class Area
 {
 public:
+	uint32_t id;
 	uint32_t start_room;
+	std::string title;
+	std::string description;
 	int area_width;
 	int area_height;
 	std::vector<Room *> rooms;
+	bool active;
+
+	uint32_t getID();
+	void setID(uint32_t number);
+	std::string getDescription();
+	void setDescription(std::string desc);
+	void loadFromFile(char *filename);
+	bool getActive();
+	void setActive(bool option);
+
+	Area()
+	{
+		id = 0;
+		start_room = 1;
+		title = "";
+		description = "";
+		active = false;
+	}
 };
 
 class AreaManager
@@ -83,5 +104,7 @@ public:
 	static Area *generateArea();
 	static Room *findAvailableRoom();
 	static Exit generateRandomDirection();
-	static void loadRoomFiles();
+	static void loadAreaFiles();
+	static Area *findAvailableArea();
+	static Area *findArea(uint32_t id);
 };

@@ -12,6 +12,7 @@ all:
 	$(CC) $(CFLAGS) -c src/command.cpp -o src/o/command.o $(LFLAGS)
 	$(CC) $(CFLAGS) -c src/areamanager.cpp -o src/o/areamanager.o $(LFLAGS)
 	$(CC) $(CFLAGS) -c src/util.cpp -o src/o/util.o $(LFLAGS)
+	$(CC) $(CFLAGS) -c src/area.cpp -o src/o/area.o $(LFLAGS)
 
 	$(CC) -o game src/o/*.o $(LFLAGS)
 clean:

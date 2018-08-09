@@ -1,6 +1,8 @@
 #include "./command.h"
 
-std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east", "west", "up", "down", "save", "who", "score" };
+std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east",
+						     "west", "up", "down", "save", "who", "score",
+						     "autodig", "rstat", "goto"};
 
 void Commands::prompt(Player *player)
 {
@@ -86,13 +88,16 @@ void Commands::parse(Player *player, std::vector<std::string> commands)
 		if(found_commands[0] == "look") { Commands::doLook(player); }
 		if(found_commands[0] == "save") { Commands::doSave(player); }
 		if(found_commands[0] == "who") { Commands::doWho(player); }
-		if(found_commands[0] == "up") { Commands::doUp(player); }
-		if(found_commands[0] == "down") { Commands::doDown(player); }
-		if(found_commands[0] == "north") { Commands::doNorth(player); }
-		if(found_commands[0] == "south") { Commands::doSouth(player); }
-		if(found_commands[0] == "east") { Commands::doEast(player); }
-		if(found_commands[0] == "west") { Commands::doWest(player); }
+		if(found_commands[0] == "up") { Commands::doMove(player, EXIT_UP); }
+		if(found_commands[0] == "down") { Commands::doMove(player, EXIT_DOWN); }
+		if(found_commands[0] == "north") { Commands::doMove(player, EXIT_NORTH); }
+		if(found_commands[0] == "south") { Commands::doMove(player, EXIT_SOUTH); }
+		if(found_commands[0] == "east") { Commands::doMove(player, EXIT_EAST); }
+		if(found_commands[0] == "west") { Commands::doMove(player, EXIT_WEST); }
 		if(found_commands[0] == "score") { Commands::doScore(player); }
+		if(found_commands[0] == "autodig") { Commands::doAutoDig(player); }
+		if(found_commands[0] == "rstat") { Commands::doRStat(player); }
+		if(found_commands[0] == "goto") { Commands::doGoto(player, commands); }
 	}
 }
 
@@ -138,12 +143,13 @@ void Commands::doLook(Player *player)
 		return;
 	}
 	std::stringstream title;
-	title << "\n=" << Util::getColorString(FG_BLUE, room->getTitle()) << "=" << std::endl;
+	title << "\n=" << Util::getColorString(FG_BLUE, room->getTitle()) << "[" << room->getID() << "]=" << std::endl;
 	std::string desc = Util::getColorString(FG_GREEN, room->getDescription()) + "\n";
 
 	Util::sendToPlayer(player, title.str());
 	Util::sendToPlayer(player, desc);
 	Util::sendToPlayer(player, Util::getColorString(FG_YELLOW, std::string("Exits:\n")));
+
 	if(!room->exit_north && !room->exit_south && !room->exit_east && !room->exit_west && !room->exit_up && !room->exit_down)
 	{
 		Util::sendToPlayer(player, std::string("None.\n\n"));
@@ -216,91 +222,187 @@ void Commands::doScore(Player *player)
 	message << "Intelligence:\t" << intelligence << std::endl;
 	message << "Agility:\t" << agility << std::endl;
 	message << "Luck:\t\t" << luck << std::endl;
-	//std:: string color = Util::getColorString(FG_CYAN, message.str());
 
 	Util::sendToPlayer(player, message.str());
 }
 
-void Commands::doUp(Player *player)
+void Commands::doMove(Player *player, Exit direction)
 {
 	Room *room = AreaManager::findRoom(player->getRoom());
-	if(!room->exit_up)
-	{
-		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
-		Util::sendToPlayer(player, error);
-		return;
-	}
 
-	player->moveToRoom(room->room_up, EXIT_UP);
-	Commands::doLook(player);
+	switch(direction)
+	{
+		default:
+			break;
+
+		case EXIT_UP:
+			if(!room->exit_up && !player->getAutoDig())
+			{
+				std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+				Util::sendToPlayer(player, error);
+				return;
+			}
+			else if(!room->exit_up && player->getAutoDig())
+			{
+				Room *new_room = AreaManager::findAvailableRoom();
+				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_UP);
+				player->moveToRoom(room->room_up, EXIT_UP);
+				Commands::doLook(player);
+			}
+			else
+			{
+				player->moveToRoom(room->room_up, EXIT_UP);
+				Commands::doLook(player);
+			}
+			break;
+
+		case EXIT_DOWN:
+			if(!room->exit_down && !player->getAutoDig())
+			{
+				std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+				Util::sendToPlayer(player, error);
+				return;
+			}
+			else if(!room->exit_down && player->getAutoDig())
+			{
+				Room *new_room = AreaManager::findAvailableRoom();
+				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_DOWN);
+				player->moveToRoom(room->room_down, EXIT_DOWN);
+				Commands::doLook(player);
+			}
+			else
+			{
+				player->moveToRoom(room->room_down, EXIT_DOWN);
+				Commands::doLook(player);
+			}
+			break;
+
+		case EXIT_NORTH:
+			if(!room->exit_north && !player->getAutoDig())
+			{
+				std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+				Util::sendToPlayer(player, error);
+				return;
+			}
+			else if(!room->exit_north && player->getAutoDig())
+			{
+				Room *new_room = AreaManager::findAvailableRoom();
+				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_NORTH);
+				player->moveToRoom(room->room_north, EXIT_NORTH);
+				Commands::doLook(player);
+			}
+			else
+			{
+				player->moveToRoom(room->room_north, EXIT_NORTH);
+				Commands::doLook(player);
+			}
+			break;
+
+		case EXIT_SOUTH:
+			if(!room->exit_south && !player->getAutoDig())
+			{
+				std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+				Util::sendToPlayer(player, error);
+				return;
+			}
+			else if(!room->exit_south && player->getAutoDig())
+			{
+				Room *new_room = AreaManager::findAvailableRoom();
+				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_SOUTH);
+				player->moveToRoom(room->room_south, EXIT_SOUTH);
+				Commands::doLook(player);
+			}
+			else
+			{
+				player->moveToRoom(room->room_south, EXIT_SOUTH);
+				Commands::doLook(player);
+			}
+			break;
+
+		case EXIT_EAST:
+			Util::printServer("Exiting east");
+			if(!room->exit_east && !player->getAutoDig())
+			{
+				std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+				Util::sendToPlayer(player, error);
+				return;
+			}
+			else if(!room->exit_east && player->getAutoDig())
+			{
+				Room *new_room = AreaManager::findAvailableRoom();
+				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_EAST);
+				player->moveToRoom(room->room_east, EXIT_EAST);
+				Commands::doLook(player);
+			}
+			else
+			{
+				player->moveToRoom(room->room_east, EXIT_EAST);
+				Commands::doLook(player);
+			}
+			break;
+
+		case EXIT_WEST:
+			Util::printServer("Exiting west");
+			if(!room->exit_west && !player->getAutoDig())
+			{
+				std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
+				Util::sendToPlayer(player, error);
+				return;
+			}
+			else if(!room->exit_west && player->getAutoDig())
+			{
+				Room *new_room = AreaManager::findAvailableRoom();
+				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_WEST);
+				player->moveToRoom(room->room_west, EXIT_WEST);
+				Commands::doLook(player);
+			}
+			else
+			{
+				player->moveToRoom(room->room_west, EXIT_WEST);
+				Commands::doLook(player);
+			}
+			break;
+	}
 }
 
-void Commands::doDown(Player *player)
+void Commands::doAutoDig(Player *player)
 {
-	Room *room = AreaManager::findRoom(player->getRoom());
-	if(!room->exit_down)
+	if(!player->getAutoDig())
 	{
-		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
-		Util::sendToPlayer(player, error);
-		return;
+		std::string message = Util::getColorString(FG_YELLOW, "Autodig enabled.\n");
+		Util::sendToPlayer(player, message);
+		player->setAutoDig(true);
 	}
-
-	player->moveToRoom(room->room_down, EXIT_DOWN);
-	Commands::doLook(player);
+	else
+	{
+		std::string message = Util::getColorString(FG_YELLOW, "Autodig disabled.\n");
+		Util::sendToPlayer(player, message);
+		player->setAutoDig(false);
+	}
 }
 
-void Commands::doNorth(Player *player)
+void Commands::doRStat(Player *player)
 {
+	std::stringstream message;
 	Room *room = AreaManager::findRoom(player->getRoom());
-	if(!room->exit_north)
-	{
-		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
-		Util::sendToPlayer(player, error);
-		return;
-	}
 
-	player->moveToRoom(room->room_north, EXIT_NORTH);
-	Commands::doLook(player);
+	message << std::endl;
+	message << "ID:\t\t" << room->getID() << std::endl;
+	message << "Title:\t" << room->getTitle() << std::endl;
+	message << "Description:\t" << room->getDescription() << std::endl;
+	message << "Exit North:\t" << room->exit_north << " - " << room->room_north << std::endl;
+	message << "Exit South:\t" << room->exit_south << " - " << room->room_south << std::endl;
+	message << "Exit East:\t" << room->exit_east << " - " << room->room_east << std::endl;
+	message << "Exit West:\t" << room->exit_west << " - " << room->room_west << std::endl;
+	message << "Exit Up:\t\t" << room->exit_up << " - " << room->room_up << std::endl;
+	message << "Exit Down:\t" << room->exit_down << " - " << room->room_down << std::endl;
+
+	Util::sendToPlayer(player, message.str());
 }
 
-void Commands::doSouth(Player *player)
+void Commands::doGoto(Player *player, std::vector<std::string> commands)
 {
-	Room *room = AreaManager::findRoom(player->getRoom());
-	if(!room->exit_south)
-	{
-		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
-		Util::sendToPlayer(player, error);
-		return;
-	}
-
-	player->moveToRoom(room->room_south, EXIT_SOUTH);
-	Commands::doLook(player);
-}
-
-void Commands::doEast(Player *player)
-{
-	Room *room = AreaManager::findRoom(player->getRoom());
-	if(!room->exit_east)
-	{
-		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
-		Util::sendToPlayer(player, error);
-		return;
-	}
-
-	player->moveToRoom(room->room_east, EXIT_EAST);
-	Commands::doLook(player);
-}
-
-void Commands::doWest(Player *player)
-{
-	Room *room = AreaManager::findRoom(player->getRoom());
-	if(!room->exit_west)
-	{
-		std::string error = Util::getColorString(FG_RED, "You can't go that way.\n");
-		Util::sendToPlayer(player, error);
-		return;
-	}
-
-	player->moveToRoom(room->room_west, EXIT_WEST);
+	int room = std::atoi(commands[1].c_str());
+	player->moveToRoom(room, EXIT_TELEPORT);
 	Commands::doLook(player);
 }
