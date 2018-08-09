@@ -1,4 +1,4 @@
-CC=g++-4.9
+CC=g++-5
 LFLAGS=-lcrypto -lpthread
 CFLAGS=-std=c++11
 
