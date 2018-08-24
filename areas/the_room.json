@@ -1,0 +1,43 @@
+{
+	"id":0,
+	"title":"The Rom",
+	"description":"Where movies go to die.",
+	"rooms":
+	[
+		{
+			"id": 1,
+			"title":"The Room",
+			"description":"test1.",
+			"exit_north":"false",
+			"exit_south":"false",
+			"exit_east":"false",
+			"exit_west":"false",
+			"exit_up":"true",
+			"exit_down":"false",
+			"room_north": 0,
+			"room_south": 0,
+			"room_east": 0,
+			"room_west": 0,
+			"room_up": 2,
+			"room_down": 0
+		},
+                {
+                        "id": 2,
+                        "title":"The Rooftop",
+                        "description":"test2.",
+                        "exit_north":"false",
+                        "exit_south":"false",
+                        "exit_east":"false",
+                        "exit_west":"false",
+                        "exit_up":"true",
+                        "exit_down":"false",
+                        "room_north": 0,
+                        "room_south": 0,
+                        "room_east": 0,
+                        "room_west": 0,
+                        "room_up": 2,
+                        "room_down": 0
+                }
+
+	]
+}

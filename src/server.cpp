@@ -1,3 +1,4 @@
+
 #include "game.h"
 #include "server.h"
 #include "nanny.h"
@@ -63,12 +64,14 @@ void Server::acceptConnections()
 	//struct sockaddr_storage client_addr;
 	struct sockaddr_in client_addr;
 	int status;
+	len = sizeof(client_addr);
 
 	while((clientfd = accept(this->sockfd, (struct sockaddr *)&client_addr, &len)))
 	{
 		if(clientfd < 0)
 		{
 			std::cerr << "Error accepting connection!" << std::endl;
+			std::cerr << "clientfd = " << clientfd << std::endl;
 			perror("accept");
 		}
 		else

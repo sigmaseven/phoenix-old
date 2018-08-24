@@ -5,7 +5,7 @@ long PlayerManager::update_timestamp;
 
 void PlayerManager::init()
 {
-	int x;
+	uint32_t x;
 
 	Util::printServer("Initializing player pool.");
 
@@ -22,7 +22,7 @@ void PlayerManager::init()
 
 Player *PlayerManager::findOpenPlayerSlot()
 {
-	int x;
+	uint32_t x;
 
 	for(x = 0; x < MAX_PLAYERS; x++)
 	{
@@ -180,7 +180,7 @@ void PlayerManager::resetPlayer(Player *player)
 
 std::vector<Player *> PlayerManager::getActivePlayers()
 {
-	int x;
+	uint32_t x;
 	std::vector<Player *> found;
 
 	for(x = 0; x < players.size(); x++)
@@ -197,7 +197,7 @@ void *PlayerManager::update(void *cmd)
 {
 	for(;;)
 	{
-		int x;
+		uint32_t x;
 
 		std::vector<Player *> players = PlayerManager::getActivePlayers();
 
@@ -212,7 +212,7 @@ void *PlayerManager::update(void *cmd)
 bool PlayerManager::isPlayerOnline(std::string name)
 {
 	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
-	int x;
+	uint32_t x;
 	for(x = 0; x < active_players.size(); x++)
 	{
 		std::string player_name = active_players[x]->getName();
@@ -228,7 +228,7 @@ Player *PlayerManager::findPlayerByDescriptor(int fd)
 {
 	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
 
-	int x;
+	uint32_t x;
 	for(x = 0; x < active_players.size(); x++)
 	{
 		if(active_players[x]->getFileDescriptor() == fd)
@@ -246,4 +246,30 @@ void Player::moveToRoom(uint32_t room_number, Exit direction)
 	{
 		this->room = room_number;
 	}
+}
+
+int Player::getFileDescriptor()
+{
+	return this->clientfd;
+}
+
+bool Player::setFileDescriptor(int fd)
+{
+	if(fd > 0)
+	{
+		this->clientfd = fd;
+		return true;
+	}
+	return false;
+}
+
+bool Player::getAutoDig()
+{
+	return this->autodig;
+}
+
+bool Player::setAutoDig(bool option)
+{
+	this->autodig = option;
+	return true;
 }

@@ -3,6 +3,7 @@
 #include "./server.h"
 #include "./nanny.h"
 #include "./util.h"
+#include "./areamanager.h"
 
 class Player
 {
@@ -29,45 +30,45 @@ class Player
 	uint32_t room;
 	bool autodig;
 public:
-	uint8_t getStrength(){ return this->strength; }
-	uint8_t getPerception(){ return this->perception; }
-	uint8_t getEndurance(){ return this->endurance; }
-	uint8_t getCharisma(){ return this->charisma; }
-	uint8_t getAgility(){ return this->agility; }
-	uint8_t getIntelligence(){ return this->intelligence; }
-	uint8_t getLuck(){ return this->luck; }
-	std::string getName(){ return this->name; }
-	bool getActive(){ return this->active; }
-	int getFileDescriptor(){ return this->clientfd; }
-	uint16_t getHealth(){ return this->health; }
-	uint16_t getMaxHealth(){ return this->max_health; }
-	uint16_t getMana(){ return this->mana; }
-	uint16_t getMaxMana(){ return this->max_mana; }
-	uint16_t getMovement(){ return this->movement; }
-	uint16_t getMaxMovement(){ return this->max_movement; }
-	std::string getPassword(){ return this->password; }
-	uint32_t getRoom(){ std::cout << "player room: " << this->room << std::endl; return this->room; }
-	bool getAutoDig() { return this->autodig; }
+	uint8_t getStrength();
+	uint8_t getPerception();
+	uint8_t getEndurance();
+	uint8_t getCharisma();
+	uint8_t getAgility();
+	uint8_t getIntelligence();
+	uint8_t getLuck();
+	std::string getName();
+	bool getActive();
+	int getFileDescriptor();
+	uint16_t getHealth();
+	uint16_t getMaxHealth();
+	uint16_t getMana();
+	uint16_t getMaxMana();
+	uint16_t getMovement();
+	uint16_t getMaxMovement();
+	std::string getPassword();
+	uint32_t getRoom();
+	bool getAutoDig();
 
-	void setHealth(uint16_t hp){ this->health = hp; }
-	void setMaxHealth(uint16_t hp){ this->max_health = hp; }
-	void setMana(uint16_t mp){ this->mana = mp; }
-	void setMaxMana(uint16_t mp){ this->max_mana = mp; }
-	void setMovement(uint16_t mp){ this->movement = mp; }
-	void setMaxMovement(uint16_t mp){ this->max_movement = mp; }
-	void setStrength(uint8_t stat){ this->strength = stat; }
-	void setPerception(uint8_t stat){ this->perception = stat; }
-	void setEndurance(uint8_t stat){ this->endurance = stat; }
-	void setCharisma(uint8_t stat){ this->charisma = stat; }
-	void setIntelligence(uint8_t stat){ this->intelligence = stat; }
-	void setAgility(uint8_t stat){ this->agility = stat; }
-	void setLuck(uint8_t stat){ this->luck = stat; }
-	void setRoom(uint32_t room_number) { this->room = room_number; }
-	void setActive(bool b){ this->active = b; }
-	void setName(std::string name){ this->name = name; }
-	void setPassword(std::string password){ this->password = password; }
-	void setFileDescriptor(int fd){ this->clientfd = fd; }
-	void setAutoDig(bool dig){ this->autodig = dig; }
+	bool setHealth(uint16_t hp);
+	bool setMaxHealth(uint16_t hp);
+	bool setMana(uint16_t mp);
+	bool setMaxMana(uint16_t mp);
+	bool setMovement(uint16_t mp);
+	bool setMaxMovement(uint16_t mp);
+	bool setStrength(uint8_t s);
+	bool setPerception(uint8_t p);
+	bool setEndurance(uint8_t e);
+	bool setCharisma(uint8_t c);
+	bool setIntelligence(uint8_t i);
+	bool setAgility(uint8_t a);
+	bool setLuck(uint8_t l);
+	bool setRoom(uint32_t room_number);
+	void setActive(bool b);
+	void setName(std::string n);
+	void setPassword(std::string p);
+	bool setFileDescriptor(int fd);
+	bool setAutoDig(bool dig);
 
 	void moveToRoom(uint32_t room_number, Exit direction);
 };

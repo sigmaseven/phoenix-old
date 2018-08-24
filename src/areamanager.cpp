@@ -25,7 +25,7 @@ void AreaManager::init()
 
 	AreaManager::loadAreaFiles();
 	AreaManager::generateArea();
-
+/*
 	rooms[0]->setTitle(std::string("Purgatory"));
 	rooms[0]->setDescription(std::string("Something has gone terribly wrong here.\n"));
 	rooms[0]->setActive(true);
@@ -48,7 +48,7 @@ void AreaManager::init()
 	rooms[2]->setActive(true);
 
 	AreaManager::createExit(1, 2, EXIT_UP);
-
+*/
 }
 
 Room *AreaManager::findRoom(uint32_t room_id)
@@ -63,7 +63,7 @@ Room *AreaManager::findRoom(uint32_t room_id)
 
 Room *AreaManager::findAvailableRoom()
 {
-	int x;
+	uint32_t x;
 	for(x = 0; x < rooms.size(); x++)
 	{
 		if(!rooms[x]->getActive())
@@ -151,37 +151,44 @@ Area *AreaManager::generateArea()
 
 Exit AreaManager::generateRandomDirection()
 {
+	Exit direction;
 	int roll = Util::rollDice(1,6);
 	switch(roll)
 	{
 		default:
 			break;
 		case 1:
-			return EXIT_NORTH;
+			direction = EXIT_NORTH;
+			break;
 		case 2:
-			return EXIT_SOUTH;
+			direction = EXIT_SOUTH;
+			break;
 		case 3:
-			return EXIT_EAST;
+			direction = EXIT_EAST;
+			break;
 		case 4:
-			return EXIT_WEST;
+			direction = EXIT_WEST;
+			break;
 		case 5:
-			return EXIT_UP;
+			direction = EXIT_UP;
+			break;
 		case 6:
-			return EXIT_DOWN;
+			direction = EXIT_DOWN;
+			break;
 	}
+	return direction;
 }
 
 void AreaManager::loadAreaFiles()
 {
 	DIR *directory;
-	int count;
 	struct dirent *file;
 
 	directory = opendir("./areas");
 
 	if(directory)
 	{
-		while(file = readdir(directory))
+		while((file = readdir(directory)))
 		{
 			if(std::string(file->d_name).find(std::string(".json")) != std::string::npos)
 			{
@@ -194,9 +201,45 @@ void AreaManager::loadAreaFiles()
 				std::cout << contents;
 				auto j = nlohmann::json::parse(contents.c_str());
 				uint32_t id = j["id"];
-				std::cout << "area id:\t" << id << std::endl;
-				std::cout << "area title:\t" << j["title"] << std::endl;
-				std::cout << "area description:\t" << j["description"] << std::endl;
+
+				for(uint32_t x = 0; x < j["rooms"].size(); x++)
+				{
+					uint32_t id = j["rooms"][x]["id"];
+					Room *room = AreaManager::findRoom(id);
+					room->setTitle(j["rooms"][x]["title"]);
+					room->setDescription(j["rooms"][x]["description"]);
+
+					if(j["rooms"][x]["exit_north"] == "true")
+					{
+						room->exit_north = true;
+						room->room_north = j["rooms"][x]["room_north"];
+					}
+					if(j["rooms"][x]["exit_south"] == "true")
+					{
+						room->exit_south = true;
+						room->room_south = j["rooms"][x]["room_south"];
+					}
+					if(j["rooms"][x]["exit_east"] == "true")
+					{
+						room->exit_east = true;
+						room->room_east = j["rooms"][x]["room_east"];
+					}
+					if(j["rooms"][x]["exit_west"] == "true")
+					{
+						room->exit_west = true;
+						room->room_west = j["rooms"][x]["room_west"];
+					}
+					if(j["rooms"][x]["exit_up"] == "true")
+					{
+						room->exit_up = true;
+						room->room_up = j["rooms"][x]["room_up"];
+					}
+					if(j["rooms"][x]["exit_down"] == "true")
+					{
+						room->exit_down = true;
+						room->room_down = j["rooms"][x]["room_down"];
+					}
+				}
 			}
 		}
 	}
@@ -204,7 +247,8 @@ void AreaManager::loadAreaFiles()
 
 Area *AreaManager::findAvailableArea()
 {
-	int x;
+	uint32_t x;
+
 	for(x = 0; x < areas.size(); x++)
 	{
 		if(!areas[x]->getActive())

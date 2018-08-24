@@ -15,16 +15,18 @@ void *Nanny::greetPlayer(void *clientfd)
 	{
 		Util::printError("Nanny received invalid client file descriptor!");
 	}
+	return NULL;
 }
 
 void Nanny::newPlayerMenu(int clientfd)
 {
 	std::string name = "";
 	std::string password = "";
-	uint8_t strength, perception, endurance, charisma, intelligence, agility, luck;
 	int ret;
+
 	Player *player = PlayerManager::findOpenPlayerSlot();
 	player->setFileDescriptor(clientfd);
+
 	Nanny::printBanner(clientfd);
 
 	while(name.length() < 1)
@@ -138,9 +140,7 @@ std::string Nanny::getPlayerName(Player *player)
 
 std::string Nanny::getPlayerPassword(Player *player)
 {
-	unsigned char hash[SHA_DIGEST_LENGTH];
 	std::stringstream ss;
-	int x;
 	int clientfd = player->getFileDescriptor();
 	std::string message = Util::getColorString(FG_CYAN, "What's your password? ");
 	Util::sendToPlayer(clientfd, message);
@@ -291,7 +291,6 @@ std::vector<int> Nanny::rollStats(int clientfd)
 
 void Nanny::gameLoop(Player *player)
 {
-	int ret;
 
 	while(player->getActive())
 	{

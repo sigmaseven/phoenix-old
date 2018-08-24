@@ -50,7 +50,7 @@ void Commands::prompt(Player *player)
 
 void Commands::parse(Player *player, std::vector<std::string> commands)
 {
-	int x;
+	uint32_t x;
 	int count = 0;
 	std::vector<std::string> found_commands;
 
@@ -103,7 +103,7 @@ void Commands::parse(Player *player, std::vector<std::string> commands)
 
 void Commands::doChat(Player *player, std::string message)
 {
-	int x;
+	uint32_t x;
 	std::string name = player->getName();
 	std::vector<Player *> players = PlayerManager::getActivePlayers();
 	std::stringstream ss;
@@ -184,7 +184,7 @@ void Commands::doWho(Player *player)
 {
 	std::stringstream message;
 	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
-	int x;
+	uint32_t x;
 
 	message << std::endl;
 	message << Util::getColorString(FG_CYAN, std::string(" ----------------------------------------------------------------------------- ")) << std::endl;

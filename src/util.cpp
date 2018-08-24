@@ -194,7 +194,7 @@ std::string Util::hash(std::string string)
 
 bool Util::validatePassword(std::string password)
 {
-	int x;
+	uint32_t x;
 
 	for(x = 0; x < password.length(); x++)
 	{
