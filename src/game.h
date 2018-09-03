@@ -29,7 +29,7 @@
 #define MAX_HEALTH   	65535
 #define MAX_MANA     	65535
 #define MAX_MOVEMENT 	65535
-#define MAX_ROOMS	5000000
+#define MAX_ROOMS	65535
 #define MAX_AREAS	32768
 
 enum Color

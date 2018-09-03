@@ -244,3 +244,60 @@ std::string Util::readFromFile(const char *filename)
 	free(buffer);
 	return contents.str();
 }
+
+void Util::writeToFile(std::string filename, std::string content)
+{
+	std::ofstream file(filename);
+	file << content;
+	file.close();
+}
+
+bool Util::checkDirectory(std::string path)
+{
+	int status;
+	DIR *directory;
+
+	directory = opendir(path.c_str());
+
+	if(!directory)
+	{
+		status = mkdir(path.c_str(), 0700);
+
+		if(status != 0)
+		{
+			Util::printError("Could not create directory!");
+			perror("mkdir");
+			return(false);
+		}
+	}
+
+	return(true);
+}
+
+bool Util::partialMatch(std::string full, std::string partial)
+{
+	if(full.find(partial) != std::string::npos)
+	{
+		return(true);
+	}
+
+	return(false);
+}
+
+uint32_t Util::stringToInteger(std::string input)
+{
+	uint32_t x;
+
+	try
+	{
+		x = std::stoi(input);
+	}
+	catch(std::out_of_range &exception)
+	{
+		std::stringstream error;
+		error << "stringToInteger - invalid value : " << input << std::endl;
+		Util::printError(error.str().c_str());
+	}
+
+	return x;
+}

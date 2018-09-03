@@ -2,6 +2,8 @@
 #include "./game.h"
 #include "./playermanager.h"
 #include "./areamanager.h"
+#include "./item.h"
+#include "./itemmanager.h"
 
 class Commands
 {
@@ -24,4 +26,10 @@ public:
 	static void doAutoDig(Player *player);
 	static void doRStat(Player *player);
 	static void doGoto(Player *player, std::vector<std::string> commands);
+	static void doCreateObject(Player *player, std::vector<std::string> commands);
+	static void doSaveObject(Player *player);
+	static void doListObjects(Player *player);
+	static void doQuit(Player *player);
+	static void doObjectEdit(Player *player,  std::vector<std::string> commands);
+	static void doObjectDelete(Player *player, std::vector<std::string> commands);
 };

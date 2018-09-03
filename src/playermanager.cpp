@@ -41,7 +41,6 @@ void PlayerManager::writePlayerFile(Player *player)
 {
 	nlohmann::json j;
 	std::ofstream file;
-	DIR *directory;
 
 	j["name"] = player->getName();
 	j["password"] = player->getPassword();
@@ -58,12 +57,15 @@ void PlayerManager::writePlayerFile(Player *player)
 	j["stats"]["agility"] = player->getAgility();
 	j["stats"]["luck"] = player->getLuck();
 	std::cout << j.dump() << std::endl;
-	directory = opendir("players");
-	if(!directory)
+
+	if(!Util::checkDirectory("players"))
 	{
-		mkdir("players", 0700);
+		Util::printError("Error locating and creating players directory.");
+		return;
 	}
+
 	file.open("players/" + player->getName() + ".json");
+
 	if(file.is_open())
 	{
 		file << j.dump();
@@ -239,6 +241,17 @@ Player *PlayerManager::findPlayerByDescriptor(int fd)
 	return NULL;
 }
 
+void PlayerManager::broadcast(std::string message)
+{
+	uint32_t x;
+
+	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
+	for(x = 0; x < active_players.size(); x++)
+	{
+		Util::sendToPlayer(active_players[x], message);
+	}
+}
+
 void Player::moveToRoom(uint32_t room_number, Exit direction)
 {
 	std::cout << "moving to room number " << room_number << std::endl;
@@ -273,3 +286,4 @@ bool Player::setAutoDig(bool option)
 	this->autodig = option;
 	return true;
 }
+

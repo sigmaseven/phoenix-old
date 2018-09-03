@@ -29,14 +29,14 @@
                         "exit_south":"false",
                         "exit_east":"false",
                         "exit_west":"false",
-                        "exit_up":"true",
-                        "exit_down":"false",
+                        "exit_up":"false",
+                        "exit_down":"true",
                         "room_north": 0,
                         "room_south": 0,
                         "room_east": 0,
                         "room_west": 0,
-                        "room_up": 2,
-                        "room_down": 0
+                        "room_up": 0,
+                        "room_down": 1
                 }
 
 	]

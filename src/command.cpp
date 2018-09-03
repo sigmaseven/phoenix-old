@@ -2,7 +2,8 @@
 
 std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east",
 						     "west", "up", "down", "save", "who", "score",
-						     "autodig", "rstat", "goto"};
+						     "autodig", "rstat", "goto", "ocreate", "oedit",
+						     "osave", "olist", "quit", "odelete" };
 
 void Commands::prompt(Player *player)
 {
@@ -85,6 +86,7 @@ void Commands::parse(Player *player, std::vector<std::string> commands)
 			}
 			Commands::doChat(player, message.str());
 		}
+
 		if(found_commands[0] == "look") { Commands::doLook(player); }
 		if(found_commands[0] == "save") { Commands::doSave(player); }
 		if(found_commands[0] == "who") { Commands::doWho(player); }
@@ -98,6 +100,12 @@ void Commands::parse(Player *player, std::vector<std::string> commands)
 		if(found_commands[0] == "autodig") { Commands::doAutoDig(player); }
 		if(found_commands[0] == "rstat") { Commands::doRStat(player); }
 		if(found_commands[0] == "goto") { Commands::doGoto(player, commands); }
+		if(found_commands[0] == "ocreate") { Commands::doCreateObject(player, commands); }
+		if(found_commands[0] == "osave") { Commands::doSaveObject(player); }
+		if(found_commands[0] == "olist") { Commands::doListObjects(player); }
+		if(found_commands[0] == "quit") { Commands::doQuit(player); }
+		if(found_commands[0] == "oedit") { Commands::doObjectEdit(player, commands); }
+		if(found_commands[0] == "odelete") { Commands::doObjectDelete(player, commands); }
 	}
 }
 
@@ -229,6 +237,7 @@ void Commands::doScore(Player *player)
 void Commands::doMove(Player *player, Exit direction)
 {
 	Room *room = AreaManager::findRoom(player->getRoom());
+	Room *new_room;
 
 	switch(direction)
 	{
@@ -244,7 +253,7 @@ void Commands::doMove(Player *player, Exit direction)
 			}
 			else if(!room->exit_up && player->getAutoDig())
 			{
-				Room *new_room = AreaManager::findAvailableRoom();
+				new_room = AreaManager::findAvailableRoom();
 				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_UP);
 				player->moveToRoom(room->room_up, EXIT_UP);
 				Commands::doLook(player);
@@ -265,7 +274,7 @@ void Commands::doMove(Player *player, Exit direction)
 			}
 			else if(!room->exit_down && player->getAutoDig())
 			{
-				Room *new_room = AreaManager::findAvailableRoom();
+				new_room = AreaManager::findAvailableRoom();
 				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_DOWN);
 				player->moveToRoom(room->room_down, EXIT_DOWN);
 				Commands::doLook(player);
@@ -286,7 +295,7 @@ void Commands::doMove(Player *player, Exit direction)
 			}
 			else if(!room->exit_north && player->getAutoDig())
 			{
-				Room *new_room = AreaManager::findAvailableRoom();
+				new_room = AreaManager::findAvailableRoom();
 				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_NORTH);
 				player->moveToRoom(room->room_north, EXIT_NORTH);
 				Commands::doLook(player);
@@ -307,7 +316,7 @@ void Commands::doMove(Player *player, Exit direction)
 			}
 			else if(!room->exit_south && player->getAutoDig())
 			{
-				Room *new_room = AreaManager::findAvailableRoom();
+				new_room = AreaManager::findAvailableRoom();
 				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_SOUTH);
 				player->moveToRoom(room->room_south, EXIT_SOUTH);
 				Commands::doLook(player);
@@ -329,7 +338,7 @@ void Commands::doMove(Player *player, Exit direction)
 			}
 			else if(!room->exit_east && player->getAutoDig())
 			{
-				Room *new_room = AreaManager::findAvailableRoom();
+				new_room = AreaManager::findAvailableRoom();
 				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_EAST);
 				player->moveToRoom(room->room_east, EXIT_EAST);
 				Commands::doLook(player);
@@ -351,7 +360,7 @@ void Commands::doMove(Player *player, Exit direction)
 			}
 			else if(!room->exit_west && player->getAutoDig())
 			{
-				Room *new_room = AreaManager::findAvailableRoom();
+				new_room = AreaManager::findAvailableRoom();
 				AreaManager::createExit(room->getID(), new_room->getID(), EXIT_WEST);
 				player->moveToRoom(room->room_west, EXIT_WEST);
 				Commands::doLook(player);
@@ -405,4 +414,77 @@ void Commands::doGoto(Player *player, std::vector<std::string> commands)
 	int room = std::atoi(commands[1].c_str());
 	player->moveToRoom(room, EXIT_TELEPORT);
 	Commands::doLook(player);
+}
+
+void Commands::doCreateObject(Player *player, std::vector<std::string> commands)
+{
+	uint32_t x;
+	std::stringstream short_description;
+	std::stringstream usage;
+	std::stringstream tmp;
+	std::string message;
+	Item *item;
+
+	usage << "Usage: ocreate [short description]" << std::endl;
+	std::cout << "command size: " << commands.size() << std::endl;
+	if(commands.size() < 2)
+	{
+		Util::sendToPlayer(player, usage.str());
+		return;
+	}
+
+	for(x = 1; x < commands.size(); x++)
+	{
+		short_description << commands[x];
+
+		if(x < commands.size() -1)
+		{
+			short_description << " ";
+		}
+	}
+
+	item = ItemManager::findAvailableItemIndex();
+
+	if(!item)
+	{
+		Util::printError("doCreateObject: Error allocating item!");
+		return;
+	}
+
+	item->setShortDescription(short_description.str());
+	item->setActive(true);
+
+	tmp << short_description.str() << " created with item ID " << item->getID() << std::endl;
+	message = Util::getColorString(FG_YELLOW, tmp.str());
+	Util::sendToPlayer(player, message);
+	return;
+}
+
+void Commands::doSaveObject(Player *player)
+{
+	ItemManager::writeToFile();
+}
+
+void Commands::doListObjects(Player *player)
+{
+	ItemManager::listItemIndex(player);
+}
+
+void Commands::doQuit(Player *player)
+{
+	int ret;
+
+	close(player->getFileDescriptor());
+	PlayerManager::resetPlayer(player);
+	pthread_exit(&ret);
+}
+
+void Commands::doObjectEdit(Player *player, std::vector<std::string> commands)
+{
+	ItemManager::editItemIndex(player, commands);
+}
+
+void Commands::doObjectDelete(Player *player, std::vector<std::string> commands)
+{
+
 }

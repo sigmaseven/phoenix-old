@@ -90,4 +90,5 @@ public:
 	static void setLastUpdate(long timestamp){ PlayerManager::update_timestamp = timestamp; }
 	static bool isPlayerOnline(std::string name);
 	static Player *findPlayerByDescriptor(int fd);
+	static void broadcast(std::string message);
 };

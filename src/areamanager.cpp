@@ -239,6 +239,7 @@ void AreaManager::loadAreaFiles()
 						room->exit_down = true;
 						room->room_down = j["rooms"][x]["room_down"];
 					}
+					room->setActive(true);
 				}
 			}
 		}

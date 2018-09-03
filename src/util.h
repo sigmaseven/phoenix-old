@@ -25,4 +25,8 @@ public:
 	static long getCurrentTime();
 	static std::string getColorString(int forground, std::string message);
 	static std::string readFromFile(const char * filename);
+	static void writeToFile(std::string filename, std::string content);
+	static bool checkDirectory(std::string path);
+	static bool partialMatch(std::string full, std::string partial);
+	static uint32_t stringToInteger(std::string input);
 };
