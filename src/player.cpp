@@ -1,4 +1,4 @@
-#include "./playermanager.h"
+#include "./player.h"
 
 std::string Player::getName()
 {
@@ -25,14 +25,14 @@ uint8_t Player::getStrength()
 	return this->strength;
 }
 
-bool Player::setStrength(uint8_t s)
+ErrorCode Player::setStrength(uint8_t s)
 {
-	if(s > 0)
+	if(s > 0 && s < MAX_STAT)
 	{
 		this->strength = s;
-		return true;
+		return SUCCESS;;
 	}
-	return false;
+	return ERROR_INVALID_STRENGTH;
 }
 
 uint8_t Player::getPerception()
@@ -40,14 +40,15 @@ uint8_t Player::getPerception()
 	return this->perception;
 }
 
-bool Player::setPerception(uint8_t p)
+ErrorCode Player::setPerception(uint8_t p)
 {
-	if(p > 0)
+	if(p > 0 && p < MAX_STAT)
 	{
 		this->perception = p;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_PERCEPTION;;
 }
 
 uint8_t Player::getEndurance()
@@ -55,14 +56,15 @@ uint8_t Player::getEndurance()
 	return this->endurance;
 }
 
-bool Player::setEndurance(uint8_t e)
+ErrorCode Player::setEndurance(uint8_t e)
 {
-	if(e > 0)
+	if(e > 0 && e < MAX_STAT)
 	{
 		this->endurance = e;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_ENDURANCE;
 }
 
 uint8_t Player::getCharisma()
@@ -70,14 +72,15 @@ uint8_t Player::getCharisma()
 	return this->charisma;
 }
 
-bool Player::setCharisma(uint8_t c)
+ErrorCode Player::setCharisma(uint8_t c)
 {
-	if(c > 0)
+	if(c > 0 && c < MAX_STAT)
 	{
 		this->charisma = c;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_CHARISMA;;
 }
 
 uint8_t Player::getIntelligence()
@@ -85,14 +88,15 @@ uint8_t Player::getIntelligence()
 	return this->intelligence;
 }
 
-bool Player::setIntelligence(uint8_t i)
+ErrorCode Player::setIntelligence(uint8_t i)
 {
-	if(i > 0)
+	if(i > 0 && i < MAX_STAT)
 	{
 		this->intelligence = i;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_INTELLIGENCE;
 }
 
 uint8_t Player::getAgility()
@@ -100,14 +104,14 @@ uint8_t Player::getAgility()
 	return this->agility;
 }
 
-bool Player::setAgility(uint8_t a)
+ErrorCode Player::setAgility(uint8_t a)
 {
-	if(a > 0)
+	if(a > 0 && a < MAX_STAT)
 	{
 		this->agility = a;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+	return ERROR_INVALID_AGILITY;
 }
 
 uint8_t Player::getLuck()
@@ -115,14 +119,15 @@ uint8_t Player::getLuck()
 	return this->luck;
 }
 
-bool Player::setLuck(uint8_t l)
+ErrorCode Player::setLuck(uint8_t l)
 {
-	if(l > 0)
+	if(l > 0 && l < MAX_STAT)
 	{
 		this->luck = l;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_LUCK;
 }
 
 bool Player::getActive()
@@ -140,14 +145,15 @@ uint16_t Player::getHealth()
 	return this->health;
 }
 
-bool Player::setHealth(uint16_t hp)
+ErrorCode Player::setHealth(uint16_t hp)
 {
-	if(hp > 0)
+	if(hp > 0 && hp < MAX_HEALTH && hp < this->max_health)
 	{
 		this->health = hp;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_HEALTH;
 }
 
 uint16_t Player::getMaxHealth()
@@ -155,14 +161,15 @@ uint16_t Player::getMaxHealth()
 	return this->max_health;
 }
 
-bool Player::setMaxHealth(uint16_t hp)
+ErrorCode Player::setMaxHealth(uint16_t hp)
 {
-	if(hp > 0)
+	if(hp > 0 && hp < MAX_HEALTH)
 	{
 		this->max_health = hp;
-		return true;
+		return ERROR_INVALID_MAX_HEALTH;
 	}
-	return false;
+
+	return SUCCESS;
 }
 
 uint16_t Player::getMana()
@@ -170,14 +177,15 @@ uint16_t Player::getMana()
 	return this->mana;
 }
 
-bool Player::setMana(uint16_t mp)
+ErrorCode Player::setMana(uint16_t mp)
 {
-	if(mp > 0)
+	if(mp > 0 && mp < MAX_MANA)
 	{
 		this->mana = mp;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_MANA;
 }
 
 uint16_t Player::getMaxMana()
@@ -185,14 +193,15 @@ uint16_t Player::getMaxMana()
 	return this->max_mana;
 }
 
-bool Player::setMaxMana(uint16_t mp)
+ErrorCode Player::setMaxMana(uint16_t mp)
 {
 	if(mp > 0)
 	{
 		this->max_mana = mp;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_MAX_MANA;
 }
 
 uint16_t Player::getMovement()
@@ -200,14 +209,15 @@ uint16_t Player::getMovement()
 	return this->movement;
 }
 
-bool Player::setMovement(uint16_t mp)
+ErrorCode Player::setMovement(uint16_t mp)
 {
-	if(mp > 0)
+	if(mp > 0 && mp < MAX_MOVEMENT && mp < this->max_movement)
 	{
 		this->movement = mp;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_MOVEMENT;
 }
 
 uint16_t Player::getMaxMovement()
@@ -215,14 +225,15 @@ uint16_t Player::getMaxMovement()
 	return this->max_movement;
 }
 
-bool Player::setMaxMovement(uint16_t mp)
+ErrorCode Player::setMaxMovement(uint16_t mp)
 {
-	if(mp > 0)
+	if(mp > 0 && mp < MAX_MOVEMENT)
 	{
 		this->max_movement = mp;
-		return true;
+		return SUCCESS;
 	}
-	return false;
+
+	return ERROR_INVALID_MAX_MOVEMENT;
 }
 
 uint32_t Player::getRoom()
@@ -230,14 +241,26 @@ uint32_t Player::getRoom()
 	return this->room;
 }
 
-bool Player::setRoom(uint32_t id)
+ErrorCode Player::setRoom(uint32_t id)
 {
+
+	if(id < 0 || id > MAX_ROOMS)
+	{
+		return ERROR_INVALID_ROOM_ID;
+	}
+
 	Room *room = AreaManager::findRoom(id);
 
-	if(room->getID() > 0 && room->getActive())
+	if(room->getID() < 0)
 	{
-		this->room = id;
-		return true;
+		return ERROR_INVALID_ROOM_ID;
 	}
-	return false;
+
+	if(!room->getActive())
+	{
+		return ERROR_INACTIVE_ROOM;
+	}
+
+	this->room = id;
+	return SUCCESS;
 }

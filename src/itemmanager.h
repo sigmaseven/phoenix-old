@@ -22,4 +22,5 @@ public:
 	static void deleteItemIndex(Player *player, uint32_t index);
 	static ItemType getItemType(std::string type);
 	static std::string getItemTypeString(ItemType type);
+	static ErrorCode copyItemIndex(Item *item, uint32_t index);
 };

@@ -316,6 +316,14 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 				item->setType(ITEM_SMG);
 				break;
 
+			case ITEM_SHOTGUN:
+				item->setType(ITEM_SHOTGUN);
+				break;
+
+			case ITEM_GRENADE:
+				item->setType(ITEM_GRENADE);
+				break;
+
 			case ITEM_SNIPER:
 				item->setType(ITEM_SNIPER);
 				break;
@@ -344,8 +352,8 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 				item->setType(ITEM_ARMOR);
 				break;
 
-			case ITEM_AMMO:
-				item->setType(ITEM_AMMO);
+			case ITEM_CLOTHING:
+				item->setType(ITEM_CLOTHING);
 				break;
 
 			case ITEM_FOOD:
@@ -370,6 +378,26 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 
 			case ITEM_MEDICINE:
 				item->setType(ITEM_MEDICINE);
+				break;
+
+			case ITEM_AMMO_223:
+				item->setType(ITEM_AMMO_223);
+				break;
+
+			case ITEM_AMMO_10MM:
+				item->setType(ITEM_AMMO_10MM);
+				break;
+
+			case ITEM_AMMO_45:
+				item->setType(ITEM_AMMO_45);
+				break;
+
+			case ITEM_AMMO_GAUSS:
+				item->setType(ITEM_AMMO_GAUSS);
+				break;
+
+			case ITEM_AMMO_LASER:
+				item->setType(ITEM_AMMO_LASER);
 				break;
 		}
 	}
@@ -459,11 +487,6 @@ ItemType ItemManager::getItemType(std::string type)
 		return ITEM_ARMOR;
 	}
 
-	if(Util::partialMatch("ammo", type))
-	{
-		return ITEM_AMMO;
-	}
-
 	if(Util::partialMatch("food", type))
 	{
 		return ITEM_FOOD;
@@ -492,6 +515,41 @@ ItemType ItemManager::getItemType(std::string type)
 	if(Util::partialMatch("medicine", type))
 	{
 		return ITEM_MEDICINE;
+	}
+
+	if(Util::partialMatch("grenade", type))
+	{
+		return ITEM_GRENADE;
+	}
+
+	if(Util::partialMatch("shotgun", type))
+	{
+		return ITEM_SHOTGUN;
+	}
+
+	if(Util::partialMatch("ammo_223", type))
+	{
+		return ITEM_AMMO_223;
+	}
+
+	if(Util::partialMatch("ammo_45", type))
+	{
+		return ITEM_AMMO_45;
+	}
+
+	if(Util::partialMatch("ammo_laser", type))
+	{
+		return ITEM_AMMO_LASER;
+	}
+
+	if(Util::partialMatch("ammo_gauss", type))
+	{
+		return ITEM_AMMO_GAUSS;
+	}
+
+	if(Util::partialMatch("clothing", type))
+	{
+		return ITEM_CLOTHING;
 	}
 
 	return ITEM_NULL;
@@ -532,6 +590,14 @@ std::string ItemManager::getItemTypeString(ItemType type)
 			item_type = "sniper";
 			break;
 
+		case ITEM_SHOTGUN:
+			item_type = "shotgun";
+			break;
+
+		case ITEM_GRENADE:
+			item_type = "grenade";
+			break;
+
 		case ITEM_LASER_PISTOL:
 			item_type = "laser_pistol";
 			break;
@@ -554,10 +620,6 @@ std::string ItemManager::getItemTypeString(ItemType type)
 
 		case ITEM_ARMOR:
 			item_type = "armor";
-			break;
-
-		case ITEM_AMMO:
-			item_type = "ammo";
 			break;
 
 		case ITEM_FOOD:
@@ -590,4 +652,30 @@ std::string ItemManager::getItemTypeString(ItemType type)
 	}
 
 	return item_type;
+}
+
+ErrorCode ItemManager::copyItemIndex(Item *item, uint32_t index)
+{
+	Item *copy = ItemManager::findItemIndex(index);
+
+	if(copy->getActive())
+	{
+		return ERROR_ACTIVE_ITEM_INDEX;
+	}
+
+	if(!item->getActive())
+	{
+		return ERROR_INACTIVE_ITEM_INDEX;
+	}
+
+	copy->setActive(true);
+	copy->setType(item->getType());
+
+	if(copy->isWeapon())
+	{
+		copy->setDamage(item->getDamage());
+		copy->setMinimumDamage(item->getMinimumDamage());
+	}
+
+	return SUCCESS;
 }

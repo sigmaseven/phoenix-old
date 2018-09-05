@@ -6,7 +6,7 @@ enum ItemType
 	ITEM_NULL,
 	ITEM_JUNK,
 	ITEM_ARMOR,
-	ITEM_AMMO,
+	ITEM_CLOTHING,
 	ITEM_FOOD,
 	ITEM_WATER,
 	ITEM_ALCOHOL,
@@ -25,7 +25,12 @@ enum ItemType
 	ITEM_LASER_RIFLE,
 	ITEM_GAUSS_PISTOL,
 	ITEM_GAUSS_RIFLE,
-	ITEM_HEAVY_WEAPON
+	ITEM_HEAVY_WEAPON,
+	ITEM_AMMO_10MM,
+	ITEM_AMMO_223,
+	ITEM_AMMO_45,
+	ITEM_AMMO_GAUSS,
+	ITEM_AMMO_LASER
 };
 
 class Item
@@ -37,6 +42,7 @@ class Item
 	uint32_t damage;
 	uint32_t min_damage;
 	uint32_t ammo_id;
+	uint32_t condition;
 	std::string short_description;
 	std::string long_description;
 
@@ -50,20 +56,24 @@ public:
 	uint32_t getMinimumDamage();
 	ItemType getType();
 	uint32_t getAmmoID();
+	uint32_t getCondition();
 
-	bool setID(uint32_t new_id);
-	bool setActive(bool option);
-	void setShortDescription(std::string short_desc);
-	void setLongDescription(std::string long_desc);
-	bool setLevel(uint32_t new_level);
-	bool setDamage(uint32_t new_damage);
-	bool setMinimumDamage(uint32_t new_damage);
-	void setType(ItemType item_type);
-	bool setAmmoID(uint32_t new_ammo);
+	ErrorCode setID(uint32_t new_id);
+	ErrorCode setActive(bool option);
+	ErrorCode setShortDescription(std::string short_desc);
+	ErrorCode setLongDescription(std::string long_desc);
+	ErrorCode setLevel(uint32_t new_level);
+	ErrorCode setDamage(uint32_t new_damage);
+	ErrorCode setMinimumDamage(uint32_t new_damage);
+	ErrorCode setType(ItemType item_type);
+	ErrorCode setAmmoID(uint32_t new_ammo);
+	ErrorCode setCondition(uint32_t new_condition);
+	bool isWeapon();
+	bool isArmor();
 
         Item()
         {
-                type = ITEM_JUNK;
+                type = ITEM_NULL;
                 level = 0;
                 active = false;
                 damage = 0;
