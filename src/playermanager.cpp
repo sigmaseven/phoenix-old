@@ -180,7 +180,7 @@ void PlayerManager::resetPlayer(Player *player)
 	}
 }
 
-std::vector<Player *> PlayerManager::getActivePlayers()
+std::vector<Player *> PlayerManager::findActivePlayers()
 {
 	uint32_t x;
 	std::vector<Player *> found;
@@ -201,7 +201,7 @@ void *PlayerManager::update(void *cmd)
 	{
 		uint32_t x;
 
-		std::vector<Player *> players = PlayerManager::getActivePlayers();
+		std::vector<Player *> players = PlayerManager::findActivePlayers();
 
 		for(x = 0; x < players.size(); x++)
 		{
@@ -213,7 +213,7 @@ void *PlayerManager::update(void *cmd)
 
 bool PlayerManager::isPlayerOnline(std::string name)
 {
-	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
+	std::vector<Player *> active_players = PlayerManager::findActivePlayers();
 	uint32_t x;
 	for(x = 0; x < active_players.size(); x++)
 	{
@@ -228,7 +228,7 @@ bool PlayerManager::isPlayerOnline(std::string name)
 
 Player *PlayerManager::findPlayerByDescriptor(int fd)
 {
-	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
+	std::vector<Player *> active_players = PlayerManager::findActivePlayers();
 
 	uint32_t x;
 	for(x = 0; x < active_players.size(); x++)
@@ -245,7 +245,7 @@ void PlayerManager::broadcast(std::string message)
 {
 	uint32_t x;
 
-	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
+	std::vector<Player *> active_players = PlayerManager::findActivePlayers();
 	for(x = 0; x < active_players.size(); x++)
 	{
 		Util::sendToPlayer(active_players[x], message);
@@ -287,3 +287,23 @@ bool Player::setAutoDig(bool option)
 	return true;
 }
 
+std::vector<Player *> PlayerManager::findPlayersByRoom(uint32_t id)
+{
+	std::vector<Player *> found_players;
+	std::vector<Player *> active_players;
+	uint32_t x;
+
+	active_players = PlayerManager::findActivePlayers();
+
+	for(x = 0; x < active_players.size(); x++)
+	{
+		Player *player = active_players[x];
+
+		if(player->getRoom())
+		{
+			found_players.push_back(player);
+		}
+	}
+
+	return found_players;
+}

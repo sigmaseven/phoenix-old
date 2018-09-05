@@ -87,19 +87,65 @@ void Nanny::newPlayerMenu(int clientfd)
 			player->setPassword(password);
 			player->setFileDescriptor(clientfd);
 
-			player->setStrength(stats[0]);
-			player->setPerception(stats[1]);
-			player->setEndurance(stats[2]);
-			player->setCharisma(stats[3]);
-			player->setIntelligence(stats[4]);
-			player->setAgility(stats[5]);
-			player->setLuck(stats[6]);
+			if(player->setStrength(stats[0]) != SUCCESS)
+			{
+				Util::printError("Error setting player strength.");
+			}
 
-			player->setMaxHealth(player->getEndurance() * 10);
-			player->setHealth(player->getEndurance() * 10);
-			player->setMovement(player->getAgility() * 20);
-			player->setMaxMovement(player->getAgility() * 20);
-			player->setRoom(0);
+			if(player->setPerception(stats[1]))
+			{
+				Util::printError("Error setting player perception.");
+			}
+
+			if(player->setEndurance(stats[2]) != SUCCESS)
+			{
+				Util::printError("Error setting player endurance.");
+			}
+
+			if(player->setCharisma(stats[3]) != SUCCESS)
+			{
+				Util::printError("Error setting player charisma.");
+			}
+
+			if(player->setIntelligence(stats[4]) != SUCCESS)
+			{
+				Util::printError("Error setting player intelligence.");
+			}
+
+			if(player->setAgility(stats[5]) != SUCCESS)
+			{
+				Util::printError("Error setting player agility.");
+			}
+
+			if(player->setLuck(stats[6]) != SUCCESS)
+			{
+				Util::printError("Error setting player luck.");
+			}
+
+			if(player->setMaxHealth(player->getEndurance() * 10) != SUCCESS)
+			{
+				Util::printError("Error setting max player health.");
+			}
+
+			if(player->setHealth(player->getEndurance() * 10) != SUCCESS)
+			{
+				Util::printError("Error setting player health.");
+			}
+
+			if(player->setMovement(player->getAgility() * 20) != SUCCESS)
+			{
+				Util::printError("Error setting player movement.");
+			}
+
+			if(player->setMaxMovement(player->getAgility() * 20) != SUCCESS)
+			{
+				Util::printError("Error setting player max movement.");
+			}
+
+			if(player->setRoom(1) != SUCCESS)
+			{
+				Util::printError("Error setting player room.");
+			}
 			player->setActive(true);
 
 			std::cout << "Creating new player " << name << " with password " << password << std::endl;

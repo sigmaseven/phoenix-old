@@ -33,6 +33,20 @@ enum ItemType
 	ITEM_AMMO_LASER
 };
 
+enum WearLocation
+{
+	WEAR_HEAD,
+	WEAR_CHEST,
+	WEAR_TORSO,
+	WEAR_BACK,
+	WEAR_WAIST,
+	WEAR_ARMS,
+	WEAR_LEGS,
+	WEAR_HANDS,
+	WEAR_FACE,
+	WEAR_FEET
+};
+
 class Item
 {
 	uint32_t id;
@@ -43,6 +57,8 @@ class Item
 	uint32_t min_damage;
 	uint32_t ammo_id;
 	uint32_t condition;
+	uint32_t value;
+	WearLocation wear_location;
 	std::string short_description;
 	std::string long_description;
 

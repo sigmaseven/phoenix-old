@@ -196,7 +196,7 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 		return;
 	}
 
-	if(std::string("level").find(commands[2]) != std::string::npos)
+	if(Util::partialMatch("level", commands[2]))
 	{
 		uint32_t level;
 
@@ -215,7 +215,7 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 		item->setLevel(level);
 	}
 
-	if(std::string("short").find(commands[2]) != std::string::npos)
+	if(Util::partialMatch("short", commands[2]))
 	{
 		uint32_t x;
 		std::stringstream short_desc;
@@ -233,7 +233,7 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 		item->setShortDescription(short_desc.str());
 	}
 
-	if(std::string("damage").find(commands[2]) != std::string::npos)
+	if(Util::partialMatch("damage", commands[2]))
 	{
 		uint32_t damage;
 
@@ -249,7 +249,7 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 		}
 	}
 
-	if(std::string("min_damage").find(commands[2]) != std::string::npos)
+	if(Util::partialMatch("min_damage", commands[2]))
 	{
 		uint32_t min_damage;
 
@@ -265,7 +265,7 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 		}
 	}
 
-	if(std::string("ammo").find(commands[2]) != std::string::npos)
+	if(Util::partialMatch("ammo", commands[2]))
 	{
 		uint32_t ammo;
 
@@ -281,7 +281,7 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 		}
 	}
 
-	if(std::string("type").find(commands[2]) != std::string::npos)
+	if(Util::partialMatch("type", commands[2]))
 	{
 		ItemType item_type = ItemManager::getItemType(commands[3]);
 
@@ -648,6 +648,30 @@ std::string ItemManager::getItemTypeString(ItemType type)
 
 		case ITEM_JUNK:
 			item_type = "junk";
+			break;
+
+		case ITEM_CLOTHING:
+			item_type = "clothing";
+			break;
+
+		case ITEM_AMMO_223:
+			item_type = "ammo_223";
+			break;
+
+		case ITEM_AMMO_45:
+			item_type = "ammo_45";
+			break;
+
+		case ITEM_AMMO_10MM:
+			item_type = "ammo_10mm";
+			break;
+
+		case ITEM_AMMO_LASER:
+			item_type = "ammo_laser";
+			break;
+
+		case ITEM_AMMO_GAUSS:
+			item_type = "ammo_gauss";
 			break;
 	}
 

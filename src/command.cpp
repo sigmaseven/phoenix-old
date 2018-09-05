@@ -2,7 +2,7 @@
 
 std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east",
 						     "west", "up", "down", "save", "who", "score",
-						     "autodig", "rstat", "goto", "ocreate", "oedit",
+						     "autodig", "rstat", "goto", "ocreate", "oset",
 						     "osave", "olist", "quit", "odelete" };
 
 void Commands::prompt(Player *player)
@@ -104,7 +104,7 @@ void Commands::parse(Player *player, std::vector<std::string> commands)
 		if(found_commands[0] == "osave") { Commands::doSaveObject(player); }
 		if(found_commands[0] == "olist") { Commands::doListObjects(player); }
 		if(found_commands[0] == "quit") { Commands::doQuit(player); }
-		if(found_commands[0] == "oedit") { Commands::doObjectEdit(player, commands); }
+		if(found_commands[0] == "oset") { Commands::doObjectEdit(player, commands); }
 		if(found_commands[0] == "odelete") { Commands::doObjectDelete(player, commands); }
 	}
 }
@@ -113,7 +113,7 @@ void Commands::doChat(Player *player, std::string message)
 {
 	uint32_t x;
 	std::string name = player->getName();
-	std::vector<Player *> players = PlayerManager::getActivePlayers();
+	std::vector<Player *> players = PlayerManager::findActivePlayers();
 	std::stringstream ss;
 
 	ss << std::endl;
@@ -144,6 +144,7 @@ void Commands::doLook(Player *player)
 {
 	uint32_t room_number = player->getRoom();
 	Room *room = AreaManager::findRoom(room_number);
+	std::vector<Player *> player_list;
 
 	if(!room)
 	{
@@ -162,36 +163,51 @@ void Commands::doLook(Player *player)
 	{
 		Util::sendToPlayer(player, std::string("None.\n\n"));
 	}
+
 	if(room->exit_north)
 	{
 		Util::sendToPlayer(player, std::string("North\n"));
 	}
+
 	if(room->exit_south)
 	{
 		Util::sendToPlayer(player, std::string("South\n"));
 	}
+
 	if(room->exit_east)
 	{
 		Util::sendToPlayer(player, std::string("East\n"));
 	}
+
 	if(room->exit_west)
 	{
 		Util::sendToPlayer(player, std::string("West\n"));
 	}
+
 	if(room->exit_up)
 	{
 		Util::sendToPlayer(player, std::string("Up\n"));
 	}
+
 	if(room->exit_down)
 	{
 		Util::sendToPlayer(player, std::string("Down\n"));
 	}
+
+	player_list = PlayerManager::findPlayersByRoom(room_number);
+
+	for(uint32_t x = 0; x < player_list.size(); x++)
+	{
+		std::stringstream player_message;
+		player_message << player_list[x]->getName() << " is here." << std::endl;
+	}
+
 }
 
 void Commands::doWho(Player *player)
 {
 	std::stringstream message;
-	std::vector<Player *> active_players = PlayerManager::getActivePlayers();
+	std::vector<Player *> active_players = PlayerManager::findActivePlayers();
 	uint32_t x;
 
 	message << std::endl;

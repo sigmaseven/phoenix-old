@@ -18,10 +18,11 @@ public:
 	static void resetPlayer(Player *player);
 	static void readPlayerFile(Player *player, std::string name);
 	static void *update(void *cmd);
-	static std::vector<Player *> getActivePlayers();
+	static std::vector<Player *> findActivePlayers();
 	static long getLastUpdate(){ return PlayerManager::update_timestamp; }
 	static void setLastUpdate(long timestamp){ PlayerManager::update_timestamp = timestamp; }
 	static bool isPlayerOnline(std::string name);
 	static Player *findPlayerByDescriptor(int fd);
+	static std::vector<Player *> findPlayersByRoom(uint32_t id);
 	static void broadcast(std::string message);
 };

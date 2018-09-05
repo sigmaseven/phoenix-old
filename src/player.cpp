@@ -147,13 +147,13 @@ uint16_t Player::getHealth()
 
 ErrorCode Player::setHealth(uint16_t hp)
 {
-	if(hp > 0 && hp < MAX_HEALTH && hp < this->max_health)
+	if(hp < 0 || hp > MAX_HEALTH)
 	{
-		this->health = hp;
-		return SUCCESS;
+		return ERROR_INVALID_HEALTH;
 	}
 
-	return ERROR_INVALID_HEALTH;
+	this->health = hp;
+	return SUCCESS;
 }
 
 uint16_t Player::getMaxHealth()
@@ -163,12 +163,12 @@ uint16_t Player::getMaxHealth()
 
 ErrorCode Player::setMaxHealth(uint16_t hp)
 {
-	if(hp > 0 && hp < MAX_HEALTH)
+	if(hp < 0 || hp > MAX_HEALTH)
 	{
-		this->max_health = hp;
-		return ERROR_INVALID_MAX_HEALTH;
+		return ERROR_INVALID_HEALTH;
 	}
 
+	this->max_health = hp;
 	return SUCCESS;
 }
 
@@ -211,13 +211,13 @@ uint16_t Player::getMovement()
 
 ErrorCode Player::setMovement(uint16_t mp)
 {
-	if(mp > 0 && mp < MAX_MOVEMENT && mp < this->max_movement)
+	if(mp < 0 || mp > MAX_MOVEMENT)
 	{
-		this->movement = mp;
-		return SUCCESS;
+		return ERROR_INVALID_MOVEMENT;
 	}
 
-	return ERROR_INVALID_MOVEMENT;
+	this->movement = mp;
+	return SUCCESS;
 }
 
 uint16_t Player::getMaxMovement()
