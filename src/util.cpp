@@ -160,12 +160,12 @@ long Util::getCurrentTime()
 	time = tp.tv_sec * 1000 + tp.tv_usec / 1000;
 	return time;
 }
-void Util::printError(const char *message)
+void Util::printError(std::string message)
 {
 	std::cerr << "[!] " << message << std::endl;
 }
 
-void Util::printServer(const char *message)
+void Util::printServer(std::string message)
 {
 	std::cout << "[+] " << message << std::endl;
 }
@@ -286,7 +286,7 @@ bool Util::partialMatch(std::string full, std::string partial)
 
 uint32_t Util::stringToInteger(std::string input)
 {
-	uint32_t x;
+	uint32_t x = NULL;
 
 	try
 	{
@@ -296,7 +296,7 @@ uint32_t Util::stringToInteger(std::string input)
 	{
 		std::stringstream error;
 		error << "stringToInteger - invalid value : " << input << std::endl;
-		Util::printError(error.str().c_str());
+		Util::printError(error.str());
 	}
 
 	return x;

@@ -1,6 +1,8 @@
 #pragma once
 #include "./game.h"
 #include "./playermanager.h"
+#include "./player.h"
+
 class AreaManager;
 
 class RoomDescription

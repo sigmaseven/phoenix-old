@@ -22,6 +22,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+
 #define MAX_ITEMS	65535
 #define MAX_NPCS	65535
 #define MAX_PLAYERS  	128
@@ -60,6 +63,7 @@ enum Exit
 enum ErrorCode
 {
 	SUCCESS,
+	ERROR_INVALID_PORT,
 	ERROR_MAX_PLAYERS,
 	ERROR_MAX_ITEMS,
 	ERROR_MAX_NPCS,

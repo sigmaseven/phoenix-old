@@ -1,5 +1,5 @@
 CC=g++-5
-LFLAGS=-lcrypto -lpthread
+LFLAGS=-lcrypto -lpthread -lssl
 CFLAGS=-std=c++11 -Wall
 
 all:
@@ -15,6 +15,7 @@ all:
 	$(CC) $(CFLAGS) -c src/player.cpp -o src/o/player.o $(LFLAGS)
 	$(CC) $(CFLAGS) -c src/item.cpp -o src/o/item.o $(LFLAGS)
 	$(CC) $(CFLAGS) -c src/itemmanager.cpp -o src/o/itemmanager.o $(LFLAGS)
+	$(CC) $(CFLAGS) -c src/help.cpp -o src/o/help.o
 
 	$(CC) -o game \
 		src/o/game.o \
@@ -28,6 +29,7 @@ all:
 		src/o/areamanager.o \
 		src/o/item.o \
 		src/o/itemmanager.o \
+		src/o/help.o \
 		$(LFLAGS)
 clean:
 	rm -rf src/o

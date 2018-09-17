@@ -18,8 +18,8 @@ public:
 	static std::vector<std::string> getPlayerCommand(int clientfd);
 	static std::vector<std::string> splitLine(std::string line);
 	static int rollDice(int number, int size);
-	static void printError(const char *message);
-	static void printServer(const char *message);
+	static void printError(std::string message);
+	static void printServer(std::string message);
 	static std::string hash(std::string string);
 	static bool validatePassword(std::string password);
 	static long getCurrentTime();

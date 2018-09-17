@@ -32,4 +32,7 @@ public:
 	static void doQuit(Player *player);
 	static void doObjectEdit(Player *player,  std::vector<std::string> commands);
 	static void doObjectDelete(Player *player, std::vector<std::string> commands);
+	static void doObjectStat(Player *player, std::vector<std::string> commands);
+	static void doObjectCopy(Player *player, std::vector<std::string> commands);
+	static void doHelp(Player *player, std::vector<std::string> commands);
 };

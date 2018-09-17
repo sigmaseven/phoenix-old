@@ -184,7 +184,7 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 	{
 		std::stringstream error;
 		error << "editItem: invalid ID - " << exception.what() << std::endl;
-		Util::printError(error.str().c_str());
+		Util::printError(error.str());
 		return;
 	}
 
@@ -208,7 +208,7 @@ void ItemManager::editItemIndex(Player *player, std::vector<std::string> command
 		{
 			std::stringstream error;
 			error << "editItem: invalid level - " << exception.what() << std::endl;
-			Util::printError(error.str().c_str());
+			Util::printError(error.str());
 			return;
 		}
 
@@ -678,28 +678,59 @@ std::string ItemManager::getItemTypeString(ItemType type)
 	return item_type;
 }
 
-ErrorCode ItemManager::copyItemIndex(Item *item, uint32_t index)
+ErrorCode ItemManager::copyItemIndex(uint32_t source)
 {
-	Item *copy = ItemManager::findItemIndex(index);
+	Item *original = ItemManager::findItemIndex(source);
+	Item *copy = ItemManager::findAvailableItemIndex();
 
-	if(copy->getActive())
+	if(!copy)
 	{
-		return ERROR_ACTIVE_ITEM_INDEX;
+		Util::printError("Object copy: couldn't find an available item index.");
+		return ERROR_INACTIVE_ITEM_INDEX;
+	}
+	else
+	{
+		std::stringstream message;
+		message << "Attempting to copy item #" << original->getID() << " to item #" << copy->getID() << std::endl;
+		Util::printServer(message.str());
 	}
 
-	if(!item->getActive())
+	if(!original->getActive())
 	{
+		Util::printError("Object copy: attempting to copy an inactive object index.");
 		return ERROR_INACTIVE_ITEM_INDEX;
 	}
 
 	copy->setActive(true);
-	copy->setType(item->getType());
+	copy->setType(original->getType());
+	copy->setShortDescription(original->getShortDescription());
+	copy->setLongDescription(original->getLongDescription());
 
 	if(copy->isWeapon())
 	{
-		copy->setDamage(item->getDamage());
-		copy->setMinimumDamage(item->getMinimumDamage());
+		copy->setDamage(original->getDamage());
+		copy->setMinimumDamage(original->getMinimumDamage());
 	}
 
 	return SUCCESS;
+}
+
+void ItemManager::listItemIndexStats(Player *player, std::vector<std::string> commands)
+{
+	std::stringstream message;
+
+	uint32_t item_id = Util::stringToInteger(commands[1]);
+
+	if(!item_id)
+	{
+		return;
+	}
+
+	Item *item = ItemManager::findItemIndex(item_id);
+
+	message << "ID:\t" << item->getID() << "\t" << "Type:\t" << ItemManager::getItemTypeString(item->getType()) << std::endl;
+	message << "Short:\t" << item->getShortDescription() << std::endl;
+	message << "Long:\t" << item->getLongDescription() << std::endl;
+
+	Util::sendToPlayer(player, message.str());
 }

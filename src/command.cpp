@@ -1,9 +1,11 @@
 #include "./command.h"
+#include "./help.h"
 
 std::vector<std::string> Commands::command_table = { "chat", "look", "north", "south", "east",
 						     "west", "up", "down", "save", "who", "score",
 						     "autodig", "rstat", "goto", "ocreate", "oset",
-						     "osave", "olist", "quit", "odelete" };
+						     "osave", "olist", "ostat", "quit", "odelete",
+						     "ocopy", "help" };
 
 void Commands::prompt(Player *player)
 {
@@ -106,6 +108,9 @@ void Commands::parse(Player *player, std::vector<std::string> commands)
 		if(found_commands[0] == "quit") { Commands::doQuit(player); }
 		if(found_commands[0] == "oset") { Commands::doObjectEdit(player, commands); }
 		if(found_commands[0] == "odelete") { Commands::doObjectDelete(player, commands); }
+		if(found_commands[0] == "ostat") { Commands::doObjectStat(player, commands); }
+		if(found_commands[0] == "ocopy") { Commands::doObjectCopy(player, commands); }
+		if(found_commands[0] == "help") { Commands::doHelp(player, commands); }
 	}
 }
 
@@ -503,4 +508,37 @@ void Commands::doObjectEdit(Player *player, std::vector<std::string> commands)
 void Commands::doObjectDelete(Player *player, std::vector<std::string> commands)
 {
 
+}
+
+void Commands::doObjectStat(Player *player, std::vector<std::string> commands)
+{
+	ItemManager::listItemIndexStats(player, commands);
+}
+
+void Commands::doObjectCopy(Player *player, std::vector<std::string> commands)
+{
+	uint32_t source = Util::stringToInteger(commands[1]);
+	//uint32_t destination = Util::stringToInteger(commands[2]);
+
+	if(!source)
+	{
+		return;
+	}
+
+	ItemManager::copyItemIndex(source);
+}
+
+void Commands::doHelp(Player *player, std::vector<std::string> commands)
+{
+	std::string help = Help::getHelp(commands[1]);
+	std::stringstream message;
+
+	if(help.size() == 0)
+	{
+		Util::sendToPlayer(player, "Help topic not found.");
+		return;
+	}
+
+	message << std::endl << help << std::endl;
+	Util::sendToPlayer(player, message.str());
 }

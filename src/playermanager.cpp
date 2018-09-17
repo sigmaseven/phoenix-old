@@ -109,7 +109,7 @@ void PlayerManager::readPlayerFile(Player *player, std::string name)
 	}
 	fclose(file);
 	free(buffer);
-	Util::printServer(contents.str().c_str());
+	Util::printServer(contents.str());
 	auto j = nlohmann::json::parse(contents.str().c_str());
 
 	player->setHealth(j["health"]);

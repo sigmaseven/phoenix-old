@@ -1,7 +1,4 @@
-
-#include "game.h"
-#include "server.h"
-#include "nanny.h"
+#include "./server.h"
 
 void Server::setup()
 {
@@ -10,7 +7,8 @@ void Server::setup()
 	struct addrinfo hints, *res;
 	int yes = 1;
 
-	std::cout << "Initiating network server setup..." << std::endl;
+	Util::printServer("Initiating network server setup...");
+
 	memset(&hints, 0, sizeof(hints));
 
 	hints.ai_family = AF_INET;
@@ -52,8 +50,14 @@ void Server::setup()
 
 
 	status = listen(this->sockfd, MAX_PLAYERS);
-	std::cout << "Server setup complete." << std::endl;
-	std::cout << "Listening on port 5555."<< std::endl;
+	Util::printServer("Server setup complete.");
+	Util::printServer("Listening on port 5555.");
+
+	if(this->encrypted)
+	{
+		this->setupTLS();
+	}
+
 	this->acceptConnections();
 }
 
@@ -76,7 +80,9 @@ void Server::acceptConnections()
 		}
 		else
 		{
-			std::cout << "Accepting new connection from clientfd " << clientfd << std::endl;
+			std::stringstream msg;
+			msg << "Accepting new connection from client file descriptor " << clientfd;
+			Util::printServer(msg.str());
 			pthread_t thread_id;
 			status = pthread_create(&thread_id, NULL, &Nanny::greetPlayer, (void *)&clientfd);
 
@@ -88,4 +94,36 @@ void Server::acceptConnections()
 		}
 	}
 
+}
+
+void Server::setupTLS()
+{
+	SSL_load_error_strings();
+	ERR_load_BIO_strings();
+	OpenSSL_add_all_algorithms();
+
+
+}
+
+int Server::getPort()
+{
+	return this->port;
+}
+
+ErrorCode Server::setPort(int p)
+{
+	if(port <= 0)
+	{
+		Util::printError("Invalid port supplied for server.");
+		return ERROR_INVALID_PORT;
+	}
+
+	this->port = p;
+	return SUCCESS;
+}
+
+ErrorCode Server::setEncryption(bool option)
+{
+	this->encrypted = option;
+	return SUCCESS;
 }
